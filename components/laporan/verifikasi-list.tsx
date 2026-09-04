@@ -32,3 +32,4 @@ export function VerifikasiList({ laporan: initialLaporan }: { laporan: Laporan[]
     </div>
   )
 }
+

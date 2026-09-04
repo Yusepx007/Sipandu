@@ -112,3 +112,4 @@ export function MonthlyTrendChart({ data }: MonthlyTrendChartProps) {
     </div>
   )
 }
+

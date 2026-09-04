@@ -95,3 +95,4 @@ export function WilayahComparisonChart({ data, title }: WilayahComparisonChartPr
     </div>
   )
 }
+

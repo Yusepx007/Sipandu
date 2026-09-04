@@ -138,7 +138,7 @@ export function LaporanKinerjaClient({ rwList }: LaporanKinerjaClientProps) {
             <div className="flex gap-2">
               {(['bulanan', 'tahunan'] as const).map((p) => (
                 <button key={p} type="button" onClick={() => setPeriode(p)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${periode === p ? 'bg-blue-500/15 border-blue-500/30 text-blue-400' : 'border-border text-muted-foreground hover:border-muted-foreground/50'}`}>
+                  className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all ${periode === p ? 'bg-blue-50 border-blue-200 text-blue-600' : 'border-border text-muted-foreground hover:border-muted-foreground/50'}`}>
                   {p.charAt(0).toUpperCase() + p.slice(1)}
                 </button>
               ))}
@@ -180,7 +180,7 @@ export function LaporanKinerjaClient({ rwList }: LaporanKinerjaClientProps) {
           </button>
           {generated && (
             <button id="btn-export-excel" onClick={handleExportExcel}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 text-sm font-semibold transition-all">
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 text-sm font-semibold transition-all">
               <Download className="w-4 h-4" /> Export Excel
             </button>
           )}
@@ -193,14 +193,14 @@ export function LaporanKinerjaClient({ rwList }: LaporanKinerjaClientProps) {
           <div className="grid grid-cols-3 gap-4">
             <div className="bg-card rounded-2xl border border-border p-5">
               <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-blue-400" />
+                <TrendingUp className="w-4 h-4 text-blue-600" />
                 <span className="text-xs text-muted-foreground">Total Laporan</span>
               </div>
               <p className="text-2xl font-bold text-foreground">{totalDiajukan}</p>
             </div>
             <div className="bg-card rounded-2xl border border-border p-5">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 <span className="text-xs text-muted-foreground">Diverifikasi</span>
               </div>
               <p className="text-2xl font-bold text-foreground">{totalVerifikasi}</p>
@@ -210,7 +210,7 @@ export function LaporanKinerjaClient({ rwList }: LaporanKinerjaClientProps) {
             </div>
             <div className="bg-card rounded-2xl border border-border p-5">
               <div className="flex items-center gap-2 mb-2">
-                <Clock className="w-4 h-4 text-amber-400" />
+                <Clock className="w-4 h-4 text-amber-600" />
                 <span className="text-xs text-muted-foreground">Rata-rata Verifikasi</span>
               </div>
               <p className="text-2xl font-bold text-foreground">
@@ -242,9 +242,9 @@ export function LaporanKinerjaClient({ rwList }: LaporanKinerjaClientProps) {
                       <tr key={r.rw_id} className="hover:bg-accent/50 transition-colors">
                         <td className="px-4 py-3 font-semibold text-foreground">RW {r.nomor_rw}</td>
                         <td className="px-4 py-3 text-foreground">{r.total_diajukan}</td>
-                        <td className="px-4 py-3 text-emerald-400">{r.total_diverifikasi}</td>
-                        <td className="px-4 py-3 text-rose-400">{r.total_ditolak}</td>
-                        <td className="px-4 py-3 text-amber-400">{Math.max(0, belum)}</td>
+                        <td className="px-4 py-3 text-emerald-600">{r.total_diverifikasi}</td>
+                        <td className="px-4 py-3 text-rose-600">{r.total_ditolak}</td>
+                        <td className="px-4 py-3 text-amber-600">{Math.max(0, belum)}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-2">
                             <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden max-w-20">
@@ -270,3 +270,4 @@ export function LaporanKinerjaClient({ rwList }: LaporanKinerjaClientProps) {
     </div>
   )
 }
+

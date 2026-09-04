@@ -77,3 +77,4 @@ export function LaporanFeed({ laporan }: LaporanFeedProps) {
     </div>
   )
 }
+

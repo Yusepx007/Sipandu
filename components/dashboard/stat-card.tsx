@@ -17,39 +17,39 @@ interface StatCardProps {
 
 const colorMap = {
   blue: {
-    icon: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
+    icon: 'bg-blue-50 text-blue-600 border-blue-200',
     glow: 'shadow-blue-500/10',
-    border: 'hover:border-blue-500/30',
+    border: 'hover:border-blue-200',
   },
   emerald: {
-    icon: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    icon: 'bg-emerald-50 text-emerald-600 border-emerald-200',
     glow: 'shadow-emerald-500/10',
-    border: 'hover:border-emerald-500/30',
+    border: 'hover:border-emerald-200',
   },
   amber: {
-    icon: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+    icon: 'bg-amber-50 text-amber-700 border-amber-200',
     glow: 'shadow-amber-500/10',
-    border: 'hover:border-amber-500/30',
+    border: 'hover:border-amber-200',
   },
   rose: {
-    icon: 'bg-rose-500/15 text-rose-400 border-rose-500/20',
-    glow: 'shadow-rose-500/10',
-    border: 'hover:border-rose-500/30',
+    icon: 'bg-red-50 text-red-600 border-red-200',
+    glow: 'shadow-red-500/10',
+    border: 'hover:border-red-200',
   },
   purple: {
-    icon: 'bg-purple-500/15 text-purple-400 border-purple-500/20',
+    icon: 'bg-purple-50 text-purple-700 border-purple-200',
     glow: 'shadow-purple-500/10',
-    border: 'hover:border-purple-500/30',
+    border: 'hover:border-purple-200',
   },
   cyan: {
-    icon: 'bg-cyan-500/15 text-cyan-400 border-cyan-500/20',
+    icon: 'bg-cyan-50 text-cyan-700 border-cyan-200',
     glow: 'shadow-cyan-500/10',
-    border: 'hover:border-cyan-500/30',
+    border: 'hover:border-cyan-200',
   },
   slate: {
-    icon: 'bg-slate-500/15 text-slate-400 border-slate-500/20',
+    icon: 'bg-slate-100 text-slate-600 border-slate-200',
     glow: 'shadow-slate-500/10',
-    border: 'hover:border-slate-500/30',
+    border: 'hover:border-slate-300',
   },
 }
 
@@ -82,9 +82,9 @@ export function StatCard({
             className={cn(
               'flex items-center gap-1 text-xs font-medium px-2 py-1 rounded-lg',
               trend.value > 0
-                ? 'text-emerald-400 bg-emerald-500/10'
+                ? 'text-emerald-600 bg-emerald-50'
                 : trend.value < 0
-                ? 'text-rose-400 bg-rose-500/10'
+                ? 'text-rose-600 bg-red-50'
                 : 'text-muted-foreground bg-muted'
             )}
           >
@@ -112,3 +112,4 @@ export function StatCard({
     </div>
   )
 }
+

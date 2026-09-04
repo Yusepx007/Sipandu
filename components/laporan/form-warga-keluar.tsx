@@ -45,7 +45,7 @@ export function FormWargaKeluar({ wargaList }: FormWargaKeluarProps) {
     <form onSubmit={handleSubmit} id="form-warga-keluar" className="space-y-5 bg-card rounded-2xl border border-border p-6">
       {/* Cari warga */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Pilih Warga <span className="text-rose-400">*</span></label>
+        <label className="text-sm font-medium text-foreground">Pilih Warga <span className="text-rose-600">*</span></label>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -69,12 +69,12 @@ export function FormWargaKeluar({ wargaList }: FormWargaKeluarProps) {
           </div>
         )}
         {selected && (
-          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-50 border border-blue-200">
             <div>
               <p className="text-sm font-medium text-blue-300">{selected.nama}</p>
-              <p className="text-xs text-blue-400/70">{selected.nik}</p>
+              <p className="text-xs text-blue-600/70">{selected.nik}</p>
             </div>
-            <button type="button" onClick={() => setSelected(null)} className="text-xs text-muted-foreground hover:text-rose-400">Ganti</button>
+            <button type="button" onClick={() => setSelected(null)} className="text-xs text-muted-foreground hover:text-rose-600">Ganti</button>
           </div>
         )}
       </div>
@@ -196,7 +196,7 @@ export function FormPindahan({ wargaList, rtList }: FormWargaKeluarProps & { rtL
     <form onSubmit={handleSubmit} id="form-pindahan" className="space-y-5 bg-card rounded-2xl border border-border p-6">
       <WargaSelector wargaList={wargaList} search={search} setSearch={setSearch} selected={selected} setSelected={setSelected} filtered={filtered} />
       <div className="space-y-1.5">
-        <label htmlFor="rt_tujuan_id" className="text-sm font-medium text-foreground">RT Tujuan <span className="text-rose-400">*</span></label>
+        <label htmlFor="rt_tujuan_id" className="text-sm font-medium text-foreground">RT Tujuan <span className="text-rose-600">*</span></label>
         <select id="rt_tujuan_id" name="rt_tujuan_id" required className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
           <option value="">-- Pilih RT Tujuan --</option>
           {(rtList as Array<{ id: string; nomor: string; rw?: { nomor?: string } | unknown }>).map((rt) => (
@@ -256,7 +256,7 @@ export function FormPerubahanData({ wargaList }: FormWargaKeluarProps) {
     <form onSubmit={handleSubmit} id="form-perubahan-data" className="space-y-5 bg-card rounded-2xl border border-border p-6">
       <WargaSelector wargaList={wargaList} search={search} setSearch={setSearch} selected={selected} setSelected={setSelected} filtered={filtered} />
       <div className="space-y-1.5">
-        <label htmlFor="field_diubah" className="text-sm font-medium text-foreground">Field yang Diubah <span className="text-rose-400">*</span></label>
+        <label htmlFor="field_diubah" className="text-sm font-medium text-foreground">Field yang Diubah <span className="text-rose-600">*</span></label>
         <select id="field_diubah" name="field_diubah" required value={fieldDiubah} onChange={e => setFieldDiubah(e.target.value)}
           className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
           <option value="">-- Pilih field --</option>
@@ -289,7 +289,7 @@ function WargaSelector({ wargaList, search, setSearch, selected, setSelected, fi
 }) {
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium text-foreground">Pilih Warga <span className="text-rose-400">*</span></label>
+      <label className="text-sm font-medium text-foreground">Pilih Warga <span className="text-rose-600">*</span></label>
       {!selected ? (
         <>
           <div className="relative">
@@ -312,12 +312,12 @@ function WargaSelector({ wargaList, search, setSearch, selected, setSelected, fi
           )}
         </>
       ) : (
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-500/10 border border-blue-500/20">
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-50 border border-blue-200">
           <div>
             <p className="text-sm font-medium text-blue-300">{selected.nama}</p>
-            <p className="text-xs text-blue-400/70">{selected.nik}</p>
+            <p className="text-xs text-blue-600/70">{selected.nik}</p>
           </div>
-          <button type="button" onClick={() => setSelected(null)} className="text-xs text-muted-foreground hover:text-rose-400 transition-colors">Ganti</button>
+          <button type="button" onClick={() => setSelected(null)} className="text-xs text-muted-foreground hover:text-rose-600 transition-colors">Ganti</button>
         </div>
       )}
     </div>
@@ -337,7 +337,7 @@ function Field({ label, name, type = 'text', placeholder, required, maxLength }:
   return (
     <div className="space-y-1.5">
       <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-400 ml-1">*</span>}
+        {label}{required && <span className="text-rose-600 ml-1">*</span>}
       </label>
       <input id={name} name={name} type={type} placeholder={placeholder} required={required} maxLength={maxLength}
         className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm" />
@@ -351,7 +351,7 @@ function SelectField({ label, name, required, options }: {
   return (
     <div className="space-y-1.5">
       <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-400 ml-1">*</span>}
+        {label}{required && <span className="text-rose-600 ml-1">*</span>}
       </label>
       <select id={name} name={name} required={required}
         className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm">
@@ -363,7 +363,7 @@ function SelectField({ label, name, required, options }: {
 }
 
 function ErrorBox({ msg }: { msg: string }) {
-  return <div className="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">{msg}</div>
+  return <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{msg}</div>
 }
 
 function FormActions({ pending, onBack, submitLabel, submitId }: {
@@ -386,10 +386,11 @@ function FormActions({ pending, onBack, submitLabel, submitId }: {
 function SuccessState() {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center gap-4 bg-card rounded-2xl border border-border">
-      <CheckCircle2 className="w-16 h-16 text-emerald-400" />
+      <CheckCircle2 className="w-16 h-16 text-emerald-600" />
       <h2 className="text-xl font-bold text-foreground">Laporan Berhasil Diajukan!</h2>
       <p className="text-muted-foreground text-sm">Status: Menunggu verifikasi Ketua RW</p>
       <p className="text-xs text-muted-foreground">Mengalihkan ke dashboard...</p>
     </div>
   )
 }
+

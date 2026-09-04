@@ -114,12 +114,12 @@ export default async function LaporanDetailPage({
           <AuditRow icon="+" color="blue" label="Laporan Diajukan"
             by={creator?.nama} date={laporan.created_at} />
           {laporan.status === 'diverifikasi' && (
-            <AuditRow icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+            <AuditRow icon={<CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />}
               color="emerald" label="Diverifikasi"
               by={verifier?.nama} date={laporan.verified_at as string} />
           )}
           {laporan.status === 'ditolak' && (
-            <AuditRow icon={<XCircle className="w-3.5 h-3.5 text-rose-400" />}
+            <AuditRow icon={<XCircle className="w-3.5 h-3.5 text-rose-600" />}
               color="rose" label="Ditolak"
               by={verifier?.nama} date={laporan.verified_at as string}
               keterangan={laporan.keterangan || undefined} />
@@ -154,7 +154,7 @@ function AuditRow({ icon, color, label, by, date, keterangan }: {
           Oleh {by || '-'}{date ? ` · ${formatTanggal(date)}` : ''}
         </p>
         {keterangan && (
-          <p className="text-xs text-rose-400 mt-1 bg-rose-500/10 px-2 py-1 rounded-lg border border-rose-500/20">
+          <p className="text-xs text-rose-600 mt-1 bg-red-50 px-2 py-1 rounded-lg border border-rose-500/20">
             Alasan: {keterangan}
           </p>
         )}

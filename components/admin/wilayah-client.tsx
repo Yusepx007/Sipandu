@@ -56,10 +56,10 @@ export function WilayahClient({ rwList: initialRwList, kelurahanNama }: WilayahC
       </div>
 
       {errorMsg && (
-        <div className="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">{errorMsg}</div>
+        <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{errorMsg}</div>
       )}
       {successMsg && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm">
+        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
           <CheckCircle2 className="w-4 h-4" />{successMsg}
         </div>
       )}
@@ -67,7 +67,7 @@ export function WilayahClient({ rwList: initialRwList, kelurahanNama }: WilayahC
       {/* Form Tambah RW */}
       <div className="bg-card rounded-2xl border border-border p-6">
         <h2 className="text-base font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Plus className="w-4 h-4 text-blue-400" /> Tambah RW Baru
+          <Plus className="w-4 h-4 text-blue-600" /> Tambah RW Baru
         </h2>
         <form onSubmit={handleCreateRW} className="flex gap-3 flex-wrap" id="form-tambah-rw">
           <div className="flex-1 min-w-32">
@@ -96,8 +96,8 @@ export function WilayahClient({ rwList: initialRwList, kelurahanNama }: WilayahC
         ) : initialRwList.map((rw) => (
           <div key={rw.id} className="bg-card rounded-2xl border border-border overflow-hidden">
             <div className="flex items-center gap-3 px-5 py-4 border-b border-border bg-[hsl(222,45%,9%)]">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/15 border border-purple-500/20 flex items-center justify-center">
-                <span className="text-purple-400 text-xs font-bold">{rw.nomor}</span>
+              <div className="w-8 h-8 rounded-lg bg-purple-50 border border-purple-200 flex items-center justify-center">
+                <span className="text-purple-700 text-xs font-bold">{rw.nomor}</span>
               </div>
               <div className="flex-1">
                 <p className="font-semibold text-foreground text-sm">RW {rw.nomor}</p>
@@ -109,7 +109,7 @@ export function WilayahClient({ rwList: initialRwList, kelurahanNama }: WilayahC
             <div className="p-4 space-y-2">
               {(rw.rt || []).map((rt) => (
                 <div key={rt.id} className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-accent transition-colors">
-                  <MapPin className="w-3.5 h-3.5 text-cyan-400" />
+                  <MapPin className="w-3.5 h-3.5 text-cyan-700" />
                   <span className="text-sm text-foreground">RT {rt.nomor}</span>
                   {rt.nama_ketua && <span className="text-xs text-muted-foreground">— {rt.nama_ketua}</span>}
                 </div>
@@ -124,7 +124,7 @@ export function WilayahClient({ rwList: initialRwList, kelurahanNama }: WilayahC
                   className="flex-1 min-w-36 px-3 py-2 rounded-lg bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-xs" />
                 <button id={`btn-tambah-rt-${rw.id}`} type="submit"
                   disabled={pendingRT === rw.id}
-                  className="px-4 py-2 rounded-lg bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-400 text-xs font-semibold transition-all disabled:opacity-50 flex items-center gap-1">
+                  className="px-4 py-2 rounded-lg bg-blue-50 hover:bg-blue-500/25 border border-blue-200 text-blue-600 text-xs font-semibold transition-all disabled:opacity-50 flex items-center gap-1">
                   {pendingRT === rw.id ? <Loader2 className="w-3 h-3 animate-spin" /> : '+'} RT
                 </button>
               </form>
@@ -135,3 +135,4 @@ export function WilayahClient({ rwList: initialRwList, kelurahanNama }: WilayahC
     </div>
   )
 }
+

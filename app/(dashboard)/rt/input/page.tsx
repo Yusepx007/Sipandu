@@ -20,8 +20,8 @@ const JENIS_OPTIONS: Array<{
     label: 'Warga Masuk',
     desc: 'Pendataan warga baru yang pindah masuk ke RT ini',
     icon: <UserCheck className="w-6 h-6" />,
-    color: 'text-blue-400',
-    bg: 'bg-blue-500/10 border-blue-500/20 hover:border-blue-500/50 hover:bg-blue-500/15',
+    color: 'text-blue-600',
+    bg: 'bg-blue-50 border-blue-200 hover:border-blue-500/50 hover:bg-blue-50',
   },
   {
     jenis: 'keluar',
@@ -36,8 +36,8 @@ const JENIS_OPTIONS: Array<{
     label: 'Kelahiran',
     desc: 'Pendataan kelahiran anggota keluarga baru',
     icon: <Baby className="w-6 h-6" />,
-    color: 'text-emerald-400',
-    bg: 'bg-emerald-500/10 border-emerald-500/20 hover:border-emerald-500/50 hover:bg-emerald-500/15',
+    color: 'text-emerald-600',
+    bg: 'bg-emerald-50 border-emerald-200 hover:border-emerald-500/50 hover:bg-emerald-50',
   },
   {
     jenis: 'meninggal',
@@ -52,15 +52,15 @@ const JENIS_OPTIONS: Array<{
     label: 'Pindahan (Internal)',
     desc: 'Warga yang pindah antar RT/RW dalam kelurahan ini',
     icon: <ArrowRightLeft className="w-6 h-6" />,
-    color: 'text-purple-400',
-    bg: 'bg-purple-500/10 border-purple-500/20 hover:border-purple-500/50 hover:bg-purple-500/15',
+    color: 'text-purple-700',
+    bg: 'bg-purple-50 border-purple-200 hover:border-purple-500/50 hover:bg-purple-50',
   },
   {
     jenis: 'perubahan_data',
     label: 'Perubahan Data',
     desc: 'Koreksi atau pembaruan data warga yang sudah terdaftar',
     icon: <RefreshCw className="w-6 h-6" />,
-    color: 'text-cyan-400',
+    color: 'text-cyan-700',
     bg: 'bg-cyan-500/10 border-cyan-500/20 hover:border-cyan-500/50 hover:bg-cyan-500/15',
   },
 ]
@@ -95,10 +95,11 @@ export default function InputLaporanPage() {
         ))}
       </div>
 
-      <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs">
+      <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 text-xs">
         <strong>Catatan:</strong> Laporan yang Anda buat akan berstatus &ldquo;Diajukan&rdquo; dan perlu
         diverifikasi oleh Ketua RW sebelum masuk ke statistik resmi.
       </div>
     </div>
   )
 }
+

@@ -117,7 +117,7 @@ export default async function AdminDashboardPage() {
       <div className="bg-card rounded-2xl border border-border p-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-foreground">Aktivitas Terbaru</h2>
-          <a href="/laporan/masuk" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+          <a href="/laporan/masuk" className="text-xs text-blue-600 hover:text-blue-300 transition-colors">
             Lihat semua →
           </a>
         </div>
@@ -126,3 +126,4 @@ export default async function AdminDashboardPage() {
     </div>
   )
 }
+

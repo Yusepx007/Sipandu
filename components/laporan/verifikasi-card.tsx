@@ -90,17 +90,17 @@ export function VerifikasiCard({ laporan, onProcessed }: VerifikasiCardProps) {
           </div>
 
           {/* Aksi */}
-          {error && <div className="mt-3 px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs">{error}</div>}
+          {error && <div className="mt-3 px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-rose-600 text-xs">{error}</div>}
 
           {!showTolakForm ? (
             <div className="flex gap-3 mt-4">
               <button onClick={() => setShowTolakForm(true)}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 transition-all text-sm font-medium">
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-200 text-rose-600 hover:bg-red-50 transition-all text-sm font-medium">
                 <XCircle className="w-4 h-4" />Tolak
               </button>
               <button id={`btn-verifikasi-${laporan.id.slice(0, 8)}`}
                 onClick={handleVerifikasi} disabled={loading !== null}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/20 transition-all text-sm font-medium disabled:opacity-50">
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 transition-all text-sm font-medium disabled:opacity-50">
                 {loading === 'verifikasi' ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                 Verifikasi
               </button>
@@ -109,13 +109,13 @@ export function VerifikasiCard({ laporan, onProcessed }: VerifikasiCardProps) {
             <div className="mt-4 space-y-3">
               <textarea value={alasan} onChange={e => setAlasan(e.target.value)} rows={2}
                 placeholder="Alasan penolakan (wajib diisi)..."
-                className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-rose-500/30 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-sm resize-none" />
+                className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-red-200 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-rose-500/50 text-sm resize-none" />
               <div className="flex gap-3">
                 <button onClick={() => setShowTolakForm(false)}
                   className="px-4 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground transition-all text-sm">Batal</button>
                 <button id={`btn-tolak-${laporan.id.slice(0, 8)}`}
                   onClick={handleTolak} disabled={loading !== null}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/15 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 transition-all text-sm font-medium disabled:opacity-50">
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-rose-500/15 border border-red-200 text-rose-600 hover:bg-rose-500/20 transition-all text-sm font-medium disabled:opacity-50">
                   {loading === 'tolak' ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
                   Konfirmasi Tolak
                 </button>
@@ -127,3 +127,4 @@ export function VerifikasiCard({ laporan, onProcessed }: VerifikasiCardProps) {
     </div>
   )
 }
+

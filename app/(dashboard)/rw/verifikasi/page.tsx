@@ -38,7 +38,7 @@ export default async function VerifikasiPage() {
           </p>
         </div>
         {totalDiajukan > 0 && (
-          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600">
             <ClipboardCheck className="w-4 h-4" />
             <span className="text-sm font-semibold">{totalDiajukan} laporan menunggu</span>
           </div>
@@ -49,7 +49,7 @@ export default async function VerifikasiPage() {
         <VerifikasiList laporan={laporan as unknown as import('@/lib/types').Laporan[]} />
       ) : (
         <div className="flex flex-col items-center justify-center py-20 text-center bg-card rounded-2xl border border-border">
-          <ClipboardCheck className="w-12 h-12 text-emerald-400 mb-4" />
+          <ClipboardCheck className="w-12 h-12 text-emerald-600 mb-4" />
           <h2 className="text-lg font-semibold text-foreground">Semua Beres!</h2>
           <p className="text-muted-foreground text-sm mt-1">Tidak ada laporan yang menunggu verifikasi</p>
         </div>
@@ -57,3 +57,4 @@ export default async function VerifikasiPage() {
     </div>
   )
 }
+

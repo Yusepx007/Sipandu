@@ -45,18 +45,18 @@ export function PenggunaClient({ penggunaList, rwList, rtList }: PenggunaClientP
         </div>
         <div className="flex gap-2">
           <button id="btn-tambah-rw" onClick={() => setTab('tambah-rw')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-500/15 border border-purple-500/30 text-purple-400 hover:bg-purple-500/20 transition-all text-sm font-medium">
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-100 transition-all text-sm font-medium">
             <UserPlus className="w-4 h-4" /> Ketua RW
           </button>
           <button id="btn-tambah-rt" onClick={() => setTab('tambah-rt')}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/15 border border-blue-500/30 text-blue-400 hover:bg-blue-500/20 transition-all text-sm font-medium">
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100 transition-all text-sm font-medium">
             <UserPlus className="w-4 h-4" /> Ketua RT
           </button>
         </div>
       </div>
 
       {success && (
-        <div className="px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm flex items-center gap-2">
+        <div className="px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4" />{success}
         </div>
       )}
@@ -70,14 +70,14 @@ export function PenggunaClient({ penggunaList, rwList, rtList }: PenggunaClientP
             <Field label="Email" name="email" type="email" required placeholder="email@kelurahan.id" />
             <Field label="Password" name="password" type="password" required placeholder="Min. 8 karakter" />
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">RW <span className="text-rose-400">*</span></label>
+              <label className="text-sm font-medium text-foreground">RW <span className="text-rose-600">*</span></label>
               <select name="rw_id" required className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
                 <option value="">-- Pilih RW --</option>
                 {rwList.map(rw => <option key={rw.id} value={rw.id}>RW {rw.nomor}</option>)}
               </select>
             </div>
           </div>
-          {error && <div className="px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">{error}</div>}
+          {error && <div className="px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-rose-600 text-sm">{error}</div>}
           <div className="flex gap-3">
             <button type="button" onClick={() => { setTab('list'); setError('') }}
               className="px-4 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground text-sm transition-all">Batal</button>
@@ -98,7 +98,7 @@ export function PenggunaClient({ penggunaList, rwList, rtList }: PenggunaClientP
             <Field label="Email" name="email" type="email" required placeholder="email@kelurahan.id" />
             <Field label="Password" name="password" type="password" required placeholder="Min. 8 karakter" />
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">RT <span className="text-rose-400">*</span></label>
+              <label className="text-sm font-medium text-foreground">RT <span className="text-rose-600">*</span></label>
               <select name="rt_id" required className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
                 <option value="">-- Pilih RT --</option>
                 {rtList.map(rt => (
@@ -109,7 +109,7 @@ export function PenggunaClient({ penggunaList, rwList, rtList }: PenggunaClientP
               </select>
             </div>
           </div>
-          {error && <div className="px-3 py-2 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-400 text-sm">{error}</div>}
+          {error && <div className="px-3 py-2 rounded-lg bg-red-50 border border-red-200 text-rose-600 text-sm">{error}</div>}
           <div className="flex gap-3">
             <button type="button" onClick={() => { setTab('list'); setError('') }}
               className="px-4 py-2.5 rounded-xl border border-border text-muted-foreground hover:text-foreground text-sm transition-all">Batal</button>
@@ -152,7 +152,7 @@ export function PenggunaClient({ penggunaList, rwList, rtList }: PenggunaClientP
                       </p>
                     </div>
                     <span className={cn('text-xs px-2 py-1 rounded-lg border font-medium',
-                      p.is_active ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-muted-foreground bg-muted border-border')}>
+                      p.is_active ? 'text-emerald-600 bg-emerald-50 border-emerald-200' : 'text-muted-foreground bg-muted border-border')}>
                       {p.is_active ? 'Aktif' : 'Nonaktif'}
                     </span>
                   </div>
@@ -172,10 +172,11 @@ function Field({ label, name, type = 'text', required, placeholder }: {
   return (
     <div className="space-y-1.5">
       <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-400 ml-1">*</span>}
+        {label}{required && <span className="text-rose-600 ml-1">*</span>}
       </label>
       <input id={name} name={name} type={type} placeholder={placeholder} required={required}
         className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm" />
     </div>
   )
 }
+

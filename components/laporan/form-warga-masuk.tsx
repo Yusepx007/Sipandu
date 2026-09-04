@@ -30,7 +30,7 @@ export function FormWargaMasuk() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center gap-4">
-        <CheckCircle2 className="w-16 h-16 text-emerald-400" />
+        <CheckCircle2 className="w-16 h-16 text-emerald-600" />
         <h2 className="text-xl font-bold text-foreground">Laporan Berhasil Diajukan!</h2>
         <p className="text-muted-foreground text-sm">Status: Menunggu verifikasi Ketua RW</p>
       </div>
@@ -54,7 +54,7 @@ export function FormWargaMasuk() {
       </div>
       <Field label="Keterangan" name="keterangan" type="textarea" placeholder="Catatan tambahan (opsional)" />
 
-      {error && <div className="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">{error}</div>}
+      {error && <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{error}</div>}
 
       <div className="flex gap-3 pt-2">
         <button type="button" onClick={() => router.back()}
@@ -87,7 +87,7 @@ function Field({ label, name, type = 'text', placeholder, required, maxLength, p
   return (
     <div className="space-y-1.5">
       <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-400 ml-1">*</span>}
+        {label}{required && <span className="text-rose-600 ml-1">*</span>}
       </label>
       <input id={name} name={name} type={type} placeholder={placeholder} required={required}
         maxLength={maxLength} pattern={pattern}
@@ -103,7 +103,7 @@ function SelectField({ label, name, required, options }: {
   return (
     <div className="space-y-1.5">
       <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-400 ml-1">*</span>}
+        {label}{required && <span className="text-rose-600 ml-1">*</span>}
       </label>
       <select id={name} name={name} required={required}
         className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm">
@@ -115,3 +115,4 @@ function SelectField({ label, name, required, options }: {
     </div>
   )
 }
+
