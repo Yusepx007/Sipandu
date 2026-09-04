@@ -146,7 +146,7 @@ export async function createLaporanMasuk(formData: FormData) {
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) {
-      return { error: err.errors[0].message }
+      return { error: err.issues[0]?.message || 'Validasi gagal' }
     }
     return { error: (err as Error).message }
   }
@@ -185,7 +185,7 @@ export async function createLaporanKeluar(formData: FormData) {
     revalidatePath('/laporan/keluar')
     return { success: true }
   } catch (err) {
-    if (err instanceof z.ZodError) return { error: err.errors[0].message }
+    if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
     return { error: (err as Error).message }
   }
 }
@@ -233,7 +233,7 @@ export async function createLaporanLahir(formData: FormData) {
     revalidatePath('/laporan/lahir')
     return { success: true }
   } catch (err) {
-    if (err instanceof z.ZodError) return { error: err.errors[0].message }
+    if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
     return { error: (err as Error).message }
   }
 }
@@ -271,7 +271,7 @@ export async function createLaporanMeninggal(formData: FormData) {
     revalidatePath('/laporan/meninggal')
     return { success: true }
   } catch (err) {
-    if (err instanceof z.ZodError) return { error: err.errors[0].message }
+    if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
     return { error: (err as Error).message }
   }
 }
@@ -314,7 +314,7 @@ export async function createLaporanPindahan(formData: FormData) {
     revalidatePath('/laporan/pindahan')
     return { success: true }
   } catch (err) {
-    if (err instanceof z.ZodError) return { error: err.errors[0].message }
+    if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
     return { error: (err as Error).message }
   }
 }
@@ -354,7 +354,7 @@ export async function createLaporanPerubahanData(formData: FormData) {
     revalidatePath('/laporan/perubahan_data')
     return { success: true }
   } catch (err) {
-    if (err instanceof z.ZodError) return { error: err.errors[0].message }
+    if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
     return { error: (err as Error).message }
   }
 }
