@@ -5,14 +5,24 @@ import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile } from '@/lib/queries/dashboard'
 import type { JenisLaporan } from '@/lib/types'
 import { JENIS_LAPORAN_LABEL, STATUS_LAPORAN_LABEL } from '@/lib/types'
-import { formatTanggal, formatWaktuRelatif, cn } from '@/lib/utils'
+import { formatWaktuRelatif, cn } from '@/lib/utils'
 import { FileText, Filter } from 'lucide-react'
 
-const VALID_JENIS: JenisLaporan[] = ['masuk', 'keluar', 'lahir', 'meninggal', 'pindahan', 'perubahan_data']
+const VALID_JENIS = ['semua', 'masuk', 'keluar', 'lahir', 'meninggal', 'pindahan', 'perubahan_data']
+
+const ALL_JENIS_MAP: Record<string, string> = {
+  semua: 'Semua Laporan',
+  masuk: 'Warga Masuk',
+  keluar: 'Warga Keluar',
+  lahir: 'Kelahiran',
+  meninggal: 'Kematian',
+  pindahan: 'Pindahan',
+  perubahan_data: 'Perubahan Data',
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ jenis: string }> }): Promise<Metadata> {
   const { jenis } = await params
-  return { title: `Laporan ${JENIS_LAPORAN_LABEL[jenis as JenisLaporan] || jenis}` }
+  return { title: ALL_JENIS_MAP[jenis] || `Laporan ${jenis}` }
 }
 
 export default async function LaporanListPage({
@@ -25,7 +35,7 @@ export default async function LaporanListPage({
   const { jenis } = await params
   const sp = await searchParams
 
-  if (!VALID_JENIS.includes(jenis as JenisLaporan)) notFound()
+  if (!VALID_JENIS.includes(jenis)) notFound()
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -43,10 +53,10 @@ export default async function LaporanListPage({
       creator:created_by(nama),
       verifier:verified_by(nama)
     `)
-    .eq('jenis', jenis)
     .order('created_at', { ascending: false })
     .limit(100)
 
+  if (jenis !== 'semua') query = query.eq('jenis', jenis)
   if (sp.status) query = query.eq('status', sp.status)
   if (sp.rt) query = query.eq('rt_id', sp.rt)
   if (sp.rw) query = query.eq('rw_id', sp.rw)
@@ -54,8 +64,7 @@ export default async function LaporanListPage({
   const { data: laporan } = await query
 
   const statusOptions = ['diajukan', 'diverifikasi', 'ditolak']
-  const jenisLabel = JENIS_LAPORAN_LABEL[jenis as JenisLaporan]
-  const allJenis = VALID_JENIS
+  const jenisLabel = ALL_JENIS_MAP[jenis] || jenis
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -64,9 +73,9 @@ export default async function LaporanListPage({
         <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
           <span>Laporan</span>
           <span>/</span>
-          <span className={cn('px-2 py-0.5 rounded-full border font-medium', `jenis-${jenis}`)}>{jenisLabel}</span>
+          <span className={cn('px-2 py-0.5 rounded-full border font-medium', jenis !== 'semua' ? `jenis-${jenis}` : 'bg-blue-50 text-blue-700 border-blue-200')}>{jenisLabel}</span>
         </div>
-        <h1 className="text-2xl font-bold text-foreground">Laporan {jenisLabel}</h1>
+        <h1 className="text-2xl font-bold text-foreground">{jenisLabel}</h1>
         <p className="text-muted-foreground text-sm mt-1">
           {laporan?.length || 0} laporan ditemukan
         </p>
@@ -74,7 +83,7 @@ export default async function LaporanListPage({
 
       {/* Jenis tabs */}
       <div className="flex gap-2 overflow-x-auto pb-2">
-        {allJenis.map((j) => (
+        {VALID_JENIS.map((j) => (
           <Link key={j} href={`/laporan/${j}`}
             className={cn(
               'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium border transition-all',
@@ -82,7 +91,7 @@ export default async function LaporanListPage({
                 ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
                 : 'text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600 bg-white'
             )}>
-            {JENIS_LAPORAN_LABEL[j]}
+            {ALL_JENIS_MAP[j]}
           </Link>
         ))}
       </div>
@@ -95,7 +104,7 @@ export default async function LaporanListPage({
             !sp.status
               ? 'bg-blue-50 border-blue-200 text-blue-700 font-semibold'
               : 'text-gray-500 border-gray-200 hover:border-gray-400 bg-white')}>
-          Semua
+          Semua Status
         </Link>
         {statusOptions.map((s) => (
           <Link key={s} href={`/laporan/${jenis}?status=${s}`}
@@ -120,6 +129,7 @@ export default async function LaporanListPage({
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-border">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Jenis</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Warga</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Wilayah</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Oleh</th>
@@ -136,8 +146,14 @@ export default async function LaporanListPage({
                   const detail = l.detail as Record<string, string>
                   const nama = warga?.nama || detail?.nama || 'Tidak diketahui'
                   const nik = warga?.nik || detail?.nik || '-'
+                  const itemJenisLabel = JENIS_LAPORAN_LABEL[l.jenis as JenisLaporan] || l.jenis
                   return (
                     <tr key={l.id} className="hover:bg-accent/50 transition-colors">
+                      <td className="px-4 py-3">
+                        <span className={cn('text-xs px-2.5 py-1 rounded-full border font-medium inline-block', `jenis-${l.jenis}`)}>
+                          {itemJenisLabel}
+                        </span>
+                      </td>
                       <td className="px-4 py-3">
                         <p className="font-medium text-foreground">{nama}</p>
                         <p className="text-xs text-muted-foreground">{nik}</p>
@@ -171,8 +187,8 @@ export default async function LaporanListPage({
               const nama = warga?.nama || detail?.nama || 'Tidak diketahui'
               return (
                 <Link key={l.id} href={`/laporan/${l.jenis}/${l.id}`} className="flex items-center gap-3 p-4 hover:bg-accent/50 transition-colors">
-                  <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border flex-shrink-0', `jenis-${jenis}`)}>
-                    {jenis === 'masuk' ? '↓' : jenis === 'keluar' ? '↑' : jenis === 'lahir' ? '★' : jenis === 'meninggal' ? '†' : jenis === 'pindahan' ? '⇄' : '✎'}
+                  <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold border flex-shrink-0', `jenis-${l.jenis}`)}>
+                    {l.jenis === 'masuk' ? '↓' : l.jenis === 'keluar' ? '↑' : l.jenis === 'lahir' ? '★' : l.jenis === 'meninggal' ? '†' : l.jenis === 'pindahan' ? '⇄' : '✎'}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm text-foreground truncate">{nama}</p>

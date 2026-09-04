@@ -16,9 +16,9 @@ interface Props {
 const inputClass = 'w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400 transition-all text-sm'
 const labelClass = 'block text-sm font-medium text-gray-700 mb-1.5'
 
-function Field({ label, name, type = 'text', placeholder, required, maxLength, readOnly, defaultValue }: {
+function Field({ label, name, type = 'text', placeholder, required, maxLength, readOnly, defaultValue, pattern }: {
   label: string; name: string; type?: string; placeholder?: string
-  required?: boolean; maxLength?: number; readOnly?: boolean; defaultValue?: string
+  required?: boolean; maxLength?: number; readOnly?: boolean; defaultValue?: string; pattern?: string
 }) {
   if (type === 'textarea') return (
     <div>
@@ -33,7 +33,7 @@ function Field({ label, name, type = 'text', placeholder, required, maxLength, r
         {label}{required && <span className="text-rose-500 ml-1">*</span>}
       </label>
       <input id={name} name={name} type={type} placeholder={placeholder}
-        required={required} maxLength={maxLength} readOnly={readOnly} defaultValue={defaultValue}
+        required={required} maxLength={maxLength} readOnly={readOnly} defaultValue={defaultValue} pattern={pattern}
         className={readOnly
           ? 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-400 text-sm cursor-not-allowed'
           : inputClass} />

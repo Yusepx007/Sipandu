@@ -10,17 +10,18 @@ type JenisLaporan = 'masuk' | 'keluar' | 'lahir' | 'meninggal' | 'pindahan' | 'p
 interface WargaWithRt extends Partial<Warga> { rt_id?: string }
 
 interface Props {
-  rtList: Array<{ id: string; nomor: string }>
+  rtList: Array<{ id: string; nomor: string; rw?: { nomor?: string } | unknown }>
   allRtList: Array<{ id: string; nomor: string; rw?: { nomor?: string } | unknown }>
   wargaList: WargaWithRt[]
+  redirectPath?: string
 }
 
 const inputClass = 'w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400/40 focus:border-blue-400 transition-all text-sm'
 const labelClass = 'block text-sm font-medium text-gray-700 mb-1.5'
 
-function Field({ label, name, type = 'text', placeholder, required, maxLength, readOnly }: {
+function Field({ label, name, type = 'text', placeholder, required, maxLength, readOnly, pattern }: {
   label: string; name: string; type?: string; placeholder?: string
-  required?: boolean; maxLength?: number; readOnly?: boolean
+  required?: boolean; maxLength?: number; readOnly?: boolean; pattern?: string
 }) {
   if (type === 'textarea') return (
     <div>
@@ -35,7 +36,7 @@ function Field({ label, name, type = 'text', placeholder, required, maxLength, r
         {label}{required && <span className="text-rose-500 ml-1">*</span>}
       </label>
       <input id={name} name={name} type={type} placeholder={placeholder} required={required}
-        maxLength={maxLength} readOnly={readOnly}
+        maxLength={maxLength} readOnly={readOnly} pattern={pattern}
         className={readOnly
           ? 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-400 text-sm cursor-not-allowed'
           : inputClass} />
@@ -66,7 +67,7 @@ function SelectBox({ label, name, required, options, value, onChange }: {
   )
 }
 
-export function UnifiedLaporanFormRW({ rtList, allRtList, wargaList }: Props) {
+export function UnifiedLaporanFormRW({ rtList, allRtList, wargaList, redirectPath = '/rw' }: Props) {
   const router = useRouter()
   const [selectedRtId, setSelectedRtId] = useState('')
   const [jenis, setJenis] = useState<JenisLaporan | ''>('')
@@ -107,7 +108,7 @@ export function UnifiedLaporanFormRW({ rtList, allRtList, wargaList }: Props) {
       else if (jenis === 'perubahan_data') result = await actions.createLaporanPerubahanData(formData)
 
       if (result?.error) { setError(result.error); setPending(false) }
-      else { setSuccess(true); setTimeout(() => router.push('/rw'), 2500) }
+      else { setSuccess(true); setTimeout(() => router.push(redirectPath), 2500) }
     } catch {
       setError('Terjadi kesalahan. Coba lagi.'); setPending(false)
     }
@@ -120,7 +121,7 @@ export function UnifiedLaporanFormRW({ rtList, allRtList, wargaList }: Props) {
           <CheckCircle2 className="w-10 h-10 text-emerald-600" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900">Laporan Berhasil Diajukan!</h2>
-        <p className="text-gray-500 text-sm">Laporan sudah masuk ke dashboard Admin</p>
+        <p className="text-gray-500 text-sm">Laporan sudah tercatat dalam sistem</p>
         <p className="text-xs text-gray-400">Mengalihkan ke dashboard...</p>
       </div>
     )
@@ -135,7 +136,13 @@ export function UnifiedLaporanFormRW({ rtList, allRtList, wargaList }: Props) {
         <SelectBox label="RT yang Melapor" name="rt_selector" required
           value={selectedRtId}
           onChange={v => { setSelectedRtId(v); setWargaId(''); }}
-          options={rtList.map(rt => ({ value: rt.id, label: `RT ${rt.nomor}` }))} />
+          options={rtList.map(rt => {
+            const rwNomor = rt.rw && typeof rt.rw === 'object' && 'nomor' in rt.rw ? (rt.rw as { nomor?: string }).nomor : undefined
+            return {
+              value: rt.id,
+              label: rwNomor ? `RT ${rt.nomor} / RW ${rwNomor}` : `RT ${rt.nomor}`
+            }
+          })} />
       </div>
 
       {/* ── Step 2: Jenis Laporan ── */}

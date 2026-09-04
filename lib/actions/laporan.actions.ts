@@ -84,8 +84,8 @@ async function getAuthenticatedCreatorProfile(rtIdOverride?: string) {
     return { supabase, profile, rtId: profile.rt_id }
   }
 
-  // Ketua RW: pakai rt_id yang dipilih dari form
-  if (profile.role === 'ketua_rw' && rtIdOverride) {
+  // Ketua RW / Admin Kelurahan: pakai rt_id yang dipilih dari form
+  if ((profile.role === 'ketua_rw' || profile.role === 'admin_kelurahan') && rtIdOverride) {
     return { supabase, profile, rtId: rtIdOverride }
   }
 
