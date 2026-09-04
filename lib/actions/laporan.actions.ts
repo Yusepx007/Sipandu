@@ -12,53 +12,68 @@ import { z } from 'zod'
 const laporanMasukSchema = z.object({
   nik: z.string().length(16, 'NIK harus 16 digit'),
   nama: z.string().min(2, 'Nama minimal 2 karakter'),
-  tempat_lahir: z.string().min(2),
-  tanggal_lahir: z.string(),
+  no_kk: z.string().optional(),
   jenis_kelamin: z.enum(['L', 'P']),
-  alamat: z.string().min(5),
-  alamat_asal: z.string().optional(),
-  nik_kepala_keluarga: z.string().optional(),
+  tempat_lahir: z.string().min(2, 'Tempat lahir wajib diisi'),
+  tanggal_lahir: z.string().min(1, 'Tanggal lahir wajib diisi'),
+  alamat_asal: z.string().min(2, 'Alamat asal wajib diisi'),
+  alamat: z.string().min(2, 'Alamat sekarang wajib diisi'),
+  hubungan_keluarga: z.string().optional(),
+  agama: z.string().optional(),
+  status_kawin: z.string().optional(),
+  pekerjaan: z.string().optional(),
+  nomor_hp: z.string().optional(),
+  tanggal_masuk: z.string().optional(),
   keterangan: z.string().optional(),
 })
 
 const laporanKeluarSchema = z.object({
   warga_id: z.string().uuid('Pilih warga yang valid'),
-  alamat_tujuan: z.string().min(5),
-  kota_tujuan: z.string().min(2),
+  alamat_tujuan: z.string().min(2, 'Alamat tujuan wajib diisi'),
+  alasan_pindah: z.string().optional(),
+  tanggal_keluar: z.string().optional(),
   keterangan: z.string().optional(),
 })
 
 const laporanLahirSchema = z.object({
-  nama: z.string().min(2),
-  tanggal_lahir: z.string(),
+  nama: z.string().min(2, 'Nama bayi wajib diisi'),
   jenis_kelamin: z.enum(['L', 'P']),
-  nik: z.string().optional(),
-  nama_ayah: z.string().min(2),
-  nama_ibu: z.string().min(2),
-  berat_lahir_kg: z.string().optional(),
-  alamat: z.string().optional(),
+  tempat_lahir: z.string().optional(),
+  tanggal_lahir: z.string().min(1, 'Tanggal lahir wajib diisi'),
+  nama_ayah: z.string().min(2, 'Nama ayah wajib diisi'),
+  nik_ayah: z.string().optional(),
+  nama_ibu: z.string().min(2, 'Nama ibu wajib diisi'),
+  nik_ibu: z.string().optional(),
+  no_kk: z.string().optional(),
+  tanggal_pelaporan: z.string().optional(),
   keterangan: z.string().optional(),
 })
 
 const laporanMeninggalSchema = z.object({
-  warga_id: z.string().uuid(),
-  tanggal_meninggal: z.string(),
+  warga_id: z.string().uuid('Pilih warga yang valid'),
+  tanggal_meninggal: z.string().min(1, 'Tanggal meninggal wajib diisi'),
+  tempat_meninggal: z.string().optional(),
   penyebab: z.string().optional(),
   keterangan: z.string().optional(),
 })
 
 const laporanPindahanSchema = z.object({
-  warga_id: z.string().uuid(),
-  rt_tujuan_id: z.string().uuid('Pilih RT tujuan'),
+  warga_id: z.string().uuid('Pilih warga yang valid'),
+  rt_tujuan_id: z.string().uuid('Pilih RT tujuan').optional().or(z.literal('')),
+  alamat_asal: z.string().optional(),
+  alamat_tujuan: z.string().optional(),
+  tanggal_pindah: z.string().optional(),
+  anggota_keluarga_ikut: z.string().optional(),
   alasan: z.string().optional(),
   keterangan: z.string().optional(),
 })
 
 const laporanPerubahanDataSchema = z.object({
-  warga_id: z.string().uuid(),
-  field_diubah: z.string().min(1),
+  warga_id: z.string().uuid('Pilih warga yang valid'),
+  field_diubah: z.string().min(1, 'Pilih data yang diubah'),
   nilai_lama: z.string(),
-  nilai_baru: z.string().min(1),
+  nilai_baru: z.string().min(1, 'Nilai baru wajib diisi'),
+  alasan: z.string().optional(),
   keterangan: z.string().optional(),
 })
 
@@ -92,7 +107,6 @@ async function getAuthenticatedCreatorProfile(rtIdOverride?: string) {
   throw new Error('Akses ditolak. Anda tidak memiliki izin untuk membuat laporan.')
 }
 
-// Alias untuk backward compatibility - juga support RW dengan rt_id_override
 async function getAuthenticatedRTProfile(rtIdOverride?: string) {
   const result = await getAuthenticatedCreatorProfile(rtIdOverride)
   return { supabase: result.supabase, profile: { ...result.profile, rt_id: result.rtId } }
@@ -110,13 +124,19 @@ export async function createLaporanMasuk(formData: FormData) {
     const raw = {
       nik: formData.get('nik') as string,
       nama: formData.get('nama') as string,
+      no_kk: formData.get('no_kk') as string || undefined,
       tempat_lahir: formData.get('tempat_lahir') as string,
       tanggal_lahir: formData.get('tanggal_lahir') as string,
       jenis_kelamin: formData.get('jenis_kelamin') as string,
       alamat: formData.get('alamat') as string,
       alamat_asal: formData.get('alamat_asal') as string,
-      nik_kepala_keluarga: formData.get('nik_kepala_keluarga') as string,
-      keterangan: formData.get('keterangan') as string,
+      hubungan_keluarga: formData.get('hubungan_keluarga') as string || undefined,
+      agama: formData.get('agama') as string || undefined,
+      status_kawin: formData.get('status_kawin') as string || undefined,
+      pekerjaan: formData.get('pekerjaan') as string || undefined,
+      nomor_hp: formData.get('nomor_hp') as string || undefined,
+      tanggal_masuk: formData.get('tanggal_masuk') as string || undefined,
+      keterangan: formData.get('keterangan') as string || undefined,
     }
 
     const validated = laporanMasukSchema.parse(raw)
@@ -135,19 +155,25 @@ export async function createLaporanMasuk(formData: FormData) {
     const { error } = await supabase.from('laporan').insert({
       jenis: 'masuk' as JenisLaporan,
       rt_id: profile.rt_id!,
-      rw_id: '', // akan diisi trigger
+      rw_id: '',
       status: 'diajukan' as StatusLaporan,
       created_by: profile.id,
       keterangan: validated.keterangan || null,
       detail: {
         nik: validated.nik,
         nama: validated.nama,
+        no_kk: validated.no_kk || null,
         tempat_lahir: validated.tempat_lahir,
         tanggal_lahir: validated.tanggal_lahir,
         jenis_kelamin: validated.jenis_kelamin,
         alamat: validated.alamat,
-        alamat_asal: validated.alamat_asal || null,
-        nik_kepala_keluarga: validated.nik_kepala_keluarga || null,
+        alamat_asal: validated.alamat_asal,
+        hubungan_keluarga: validated.hubungan_keluarga || null,
+        agama: validated.agama || null,
+        status_kawin: validated.status_kawin || null,
+        pekerjaan: validated.pekerjaan || null,
+        nomor_hp: validated.nomor_hp || null,
+        tanggal_masuk: validated.tanggal_masuk || new Date().toISOString().split('T')[0],
       },
     })
 
@@ -157,7 +183,9 @@ export async function createLaporanMasuk(formData: FormData) {
     }
 
     revalidatePath('/rt')
-    revalidatePath('/laporan/masuk')
+    revalidatePath('/rw')
+    revalidatePath('/admin')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) {
@@ -175,8 +203,9 @@ export async function createLaporanKeluar(formData: FormData) {
     const raw = {
       warga_id: formData.get('warga_id') as string,
       alamat_tujuan: formData.get('alamat_tujuan') as string,
-      kota_tujuan: formData.get('kota_tujuan') as string,
-      keterangan: formData.get('keterangan') as string,
+      alasan_pindah: formData.get('alasan_pindah') as string || undefined,
+      tanggal_keluar: formData.get('tanggal_keluar') as string || undefined,
+      keterangan: formData.get('keterangan') as string || undefined,
     }
 
     const validated = laporanKeluarSchema.parse(raw)
@@ -191,14 +220,17 @@ export async function createLaporanKeluar(formData: FormData) {
       keterangan: validated.keterangan || null,
       detail: {
         alamat_tujuan: validated.alamat_tujuan,
-        kota_tujuan: validated.kota_tujuan,
+        alasan_pindah: validated.alasan_pindah || null,
+        tanggal_keluar: validated.tanggal_keluar || new Date().toISOString().split('T')[0],
       },
     })
 
     if (error) return { error: error.message }
 
     revalidatePath('/rt')
-    revalidatePath('/laporan/keluar')
+    revalidatePath('/rw')
+    revalidatePath('/admin')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
@@ -213,14 +245,16 @@ export async function createLaporanLahir(formData: FormData) {
 
     const raw = {
       nama: formData.get('nama') as string,
-      tanggal_lahir: formData.get('tanggal_lahir') as string,
       jenis_kelamin: formData.get('jenis_kelamin') as string,
-      nik: formData.get('nik') as string || undefined,
+      tempat_lahir: formData.get('tempat_lahir') as string || undefined,
+      tanggal_lahir: formData.get('tanggal_lahir') as string,
       nama_ayah: formData.get('nama_ayah') as string,
+      nik_ayah: formData.get('nik_ayah') as string || undefined,
       nama_ibu: formData.get('nama_ibu') as string,
-      berat_lahir_kg: formData.get('berat_lahir_kg') as string || undefined,
-      alamat: formData.get('alamat') as string || undefined,
-      keterangan: formData.get('keterangan') as string,
+      nik_ibu: formData.get('nik_ibu') as string || undefined,
+      no_kk: formData.get('no_kk') as string || undefined,
+      tanggal_pelaporan: formData.get('tanggal_pelaporan') as string || undefined,
+      keterangan: formData.get('keterangan') as string || undefined,
     }
 
     const validated = laporanLahirSchema.parse(raw)
@@ -234,20 +268,24 @@ export async function createLaporanLahir(formData: FormData) {
       keterangan: validated.keterangan || null,
       detail: {
         nama: validated.nama,
-        tanggal_lahir: validated.tanggal_lahir,
         jenis_kelamin: validated.jenis_kelamin,
-        nik: validated.nik || null,
+        tempat_lahir: validated.tempat_lahir || null,
+        tanggal_lahir: validated.tanggal_lahir,
         nama_ayah: validated.nama_ayah,
+        nik_ayah: validated.nik_ayah || null,
         nama_ibu: validated.nama_ibu,
-        berat_lahir_kg: validated.berat_lahir_kg ? parseFloat(validated.berat_lahir_kg) : null,
-        alamat: validated.alamat || null,
+        nik_ibu: validated.nik_ibu || null,
+        no_kk: validated.no_kk || null,
+        tanggal_pelaporan: validated.tanggal_pelaporan || new Date().toISOString().split('T')[0],
       },
     })
 
     if (error) return { error: error.message }
 
     revalidatePath('/rt')
-    revalidatePath('/laporan/lahir')
+    revalidatePath('/rw')
+    revalidatePath('/admin')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
@@ -263,8 +301,9 @@ export async function createLaporanMeninggal(formData: FormData) {
     const raw = {
       warga_id: formData.get('warga_id') as string,
       tanggal_meninggal: formData.get('tanggal_meninggal') as string,
+      tempat_meninggal: formData.get('tempat_meninggal') as string || undefined,
       penyebab: formData.get('penyebab') as string || undefined,
-      keterangan: formData.get('keterangan') as string,
+      keterangan: formData.get('keterangan') as string || undefined,
     }
 
     const validated = laporanMeninggalSchema.parse(raw)
@@ -279,6 +318,7 @@ export async function createLaporanMeninggal(formData: FormData) {
       keterangan: validated.keterangan || null,
       detail: {
         tanggal_meninggal: validated.tanggal_meninggal,
+        tempat_meninggal: validated.tempat_meninggal || null,
         penyebab: validated.penyebab || null,
       },
     })
@@ -286,7 +326,9 @@ export async function createLaporanMeninggal(formData: FormData) {
     if (error) return { error: error.message }
 
     revalidatePath('/rt')
-    revalidatePath('/laporan/meninggal')
+    revalidatePath('/rw')
+    revalidatePath('/admin')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
@@ -301,16 +343,16 @@ export async function createLaporanPindahan(formData: FormData) {
 
     const raw = {
       warga_id: formData.get('warga_id') as string,
-      rt_tujuan_id: formData.get('rt_tujuan_id') as string,
+      rt_tujuan_id: (formData.get('rt_tujuan_id') as string) || undefined,
+      alamat_asal: formData.get('alamat_asal') as string || undefined,
+      alamat_tujuan: formData.get('alamat_tujuan') as string || undefined,
+      tanggal_pindah: formData.get('tanggal_pindah') as string || undefined,
+      anggota_keluarga_ikut: formData.get('anggota_keluarga_ikut') as string || undefined,
       alasan: formData.get('alasan') as string || undefined,
-      keterangan: formData.get('keterangan') as string,
+      keterangan: formData.get('keterangan') as string || undefined,
     }
 
     const validated = laporanPindahanSchema.parse(raw)
-
-    if (validated.rt_tujuan_id === profile.rt_id) {
-      return { error: 'RT tujuan tidak boleh sama dengan RT asal' }
-    }
 
     const { error } = await supabase.from('laporan').insert({
       jenis: 'pindahan' as JenisLaporan,
@@ -318,11 +360,15 @@ export async function createLaporanPindahan(formData: FormData) {
       rt_id: profile.rt_id!,
       rw_id: '',
       rt_asal_id: profile.rt_id!,
-      rt_tujuan_id: validated.rt_tujuan_id,
+      rt_tujuan_id: validated.rt_tujuan_id || null,
       status: 'diajukan' as StatusLaporan,
       created_by: profile.id,
       keterangan: validated.keterangan || null,
       detail: {
+        alamat_asal: validated.alamat_asal || null,
+        alamat_tujuan: validated.alamat_tujuan || null,
+        tanggal_pindah: validated.tanggal_pindah || new Date().toISOString().split('T')[0],
+        anggota_keluarga_ikut: validated.anggota_keluarga_ikut || null,
         alasan: validated.alasan || null,
       },
     })
@@ -330,7 +376,9 @@ export async function createLaporanPindahan(formData: FormData) {
     if (error) return { error: error.message }
 
     revalidatePath('/rt')
-    revalidatePath('/laporan/pindahan')
+    revalidatePath('/rw')
+    revalidatePath('/admin')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
@@ -348,7 +396,8 @@ export async function createLaporanPerubahanData(formData: FormData) {
       field_diubah: formData.get('field_diubah') as string,
       nilai_lama: formData.get('nilai_lama') as string,
       nilai_baru: formData.get('nilai_baru') as string,
-      keterangan: formData.get('keterangan') as string,
+      alasan: formData.get('alasan') as string || undefined,
+      keterangan: formData.get('keterangan') as string || undefined,
     }
 
     const validated = laporanPerubahanDataSchema.parse(raw)
@@ -365,13 +414,16 @@ export async function createLaporanPerubahanData(formData: FormData) {
         field_diubah: validated.field_diubah,
         nilai_lama: validated.nilai_lama,
         nilai_baru: validated.nilai_baru,
+        alasan: validated.alasan || null,
       },
     })
 
     if (error) return { error: error.message }
 
     revalidatePath('/rt')
-    revalidatePath('/laporan/perubahan_data')
+    revalidatePath('/rw')
+    revalidatePath('/admin')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     if (err instanceof z.ZodError) return { error: err.issues[0]?.message || 'Validasi gagal' }
@@ -407,13 +459,14 @@ export async function verifikasiLaporan(laporanId: string) {
         verified_at: new Date().toISOString(),
       })
       .eq('id', laporanId)
-      .eq('status', 'diajukan') // Hanya bisa verifikasi yang diajukan
+      .eq('status', 'diajukan')
 
     if (error) return { error: error.message }
 
     revalidatePath('/rw/verifikasi')
     revalidatePath('/admin')
     revalidatePath('/rw')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     return { error: (err as Error).message }
@@ -454,9 +507,9 @@ export async function tolakLaporan(laporanId: string, alasan: string) {
     revalidatePath('/rw/verifikasi')
     revalidatePath('/admin')
     revalidatePath('/rw')
+    revalidatePath('/laporan/semua')
     return { success: true }
   } catch (err) {
     return { error: (err as Error).message }
   }
 }
-

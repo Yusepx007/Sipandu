@@ -17,7 +17,7 @@ export default async function InputLaporanPage() {
   // Ambil warga aktif di RT ini
   const { data: wargaList } = await supabase
     .from('warga')
-    .select('id, nik, nama, jenis_kelamin, tanggal_lahir, alamat, pekerjaan, status_kawin, pendidikan, nomor_hp')
+    .select('id, nik, nama, no_kk, jenis_kelamin, tanggal_lahir, alamat, pekerjaan, status_kawin, pendidikan, agama, nomor_hp')
     .eq('rt_id', profile.rt_id)
     .eq('status', 'aktif')
     .order('nama')

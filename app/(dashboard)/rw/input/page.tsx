@@ -24,7 +24,7 @@ export default async function RWInputLaporanPage() {
   // Ambil semua warga aktif di RW ini (semua RT)
   const { data: wargaList } = await supabase
     .from('warga')
-    .select('id, nik, nama, jenis_kelamin, tanggal_lahir, alamat, pekerjaan, status_kawin, pendidikan, nomor_hp, rt_id')
+    .select('id, nik, nama, no_kk, jenis_kelamin, tanggal_lahir, alamat, pekerjaan, status_kawin, pendidikan, agama, nomor_hp, rt_id')
     .in('rt_id', (rtList || []).map(r => r.id))
     .eq('status', 'aktif')
     .order('nama')

@@ -23,7 +23,7 @@ export default async function AdminInputLaporanPage() {
   // Ambil semua warga aktif di kelurahan
   const { data: wargaList } = await supabase
     .from('warga')
-    .select('id, nik, nama, jenis_kelamin, tanggal_lahir, alamat, pekerjaan, status_kawin, pendidikan, nomor_hp, rt_id')
+    .select('id, nik, nama, no_kk, jenis_kelamin, tanggal_lahir, alamat, pekerjaan, status_kawin, pendidikan, agama, nomor_hp, rt_id')
     .eq('status', 'aktif')
     .order('nama')
 
