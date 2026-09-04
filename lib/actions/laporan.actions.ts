@@ -66,7 +66,7 @@ const laporanPerubahanDataSchema = z.object({
 // HELPERS
 // ============================================================
 
-async function getAuthenticatedRTProfile() {
+async function getAuthenticatedCreatorProfile(rtIdOverride?: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('Tidak terautentikasi')
@@ -77,11 +77,25 @@ async function getAuthenticatedRTProfile() {
     .eq('id', user.id)
     .single()
 
-  if (!profile || profile.role !== 'ketua_rt' || !profile.rt_id) {
-    throw new Error('Hanya Ketua RT yang dapat membuat laporan')
+  if (!profile) throw new Error('Profil tidak ditemukan')
+
+  // Ketua RT: pakai rt_id dari profil
+  if (profile.role === 'ketua_rt' && profile.rt_id) {
+    return { supabase, profile, rtId: profile.rt_id }
   }
 
-  return { supabase, profile }
+  // Ketua RW: pakai rt_id yang dipilih dari form
+  if (profile.role === 'ketua_rw' && rtIdOverride) {
+    return { supabase, profile, rtId: rtIdOverride }
+  }
+
+  throw new Error('Akses ditolak. Anda tidak memiliki izin untuk membuat laporan.')
+}
+
+// Alias untuk backward compatibility - juga support RW dengan rt_id_override
+async function getAuthenticatedRTProfile(rtIdOverride?: string) {
+  const result = await getAuthenticatedCreatorProfile(rtIdOverride)
+  return { supabase: result.supabase, profile: { ...result.profile, rt_id: result.rtId } }
 }
 
 // ============================================================
@@ -90,7 +104,8 @@ async function getAuthenticatedRTProfile() {
 
 export async function createLaporanMasuk(formData: FormData) {
   try {
-    const { supabase, profile } = await getAuthenticatedRTProfile()
+    const rtIdOverride = (formData.get('rt_id_override') as string) || undefined
+    const { supabase, profile } = await getAuthenticatedRTProfile(rtIdOverride)
 
     const raw = {
       nik: formData.get('nik') as string,
@@ -154,7 +169,8 @@ export async function createLaporanMasuk(formData: FormData) {
 
 export async function createLaporanKeluar(formData: FormData) {
   try {
-    const { supabase, profile } = await getAuthenticatedRTProfile()
+    const rtIdOverride = (formData.get('rt_id_override') as string) || undefined
+    const { supabase, profile } = await getAuthenticatedRTProfile(rtIdOverride)
 
     const raw = {
       warga_id: formData.get('warga_id') as string,
@@ -192,7 +208,8 @@ export async function createLaporanKeluar(formData: FormData) {
 
 export async function createLaporanLahir(formData: FormData) {
   try {
-    const { supabase, profile } = await getAuthenticatedRTProfile()
+    const rtIdOverride = (formData.get('rt_id_override') as string) || undefined
+    const { supabase, profile } = await getAuthenticatedRTProfile(rtIdOverride)
 
     const raw = {
       nama: formData.get('nama') as string,
@@ -240,7 +257,8 @@ export async function createLaporanLahir(formData: FormData) {
 
 export async function createLaporanMeninggal(formData: FormData) {
   try {
-    const { supabase, profile } = await getAuthenticatedRTProfile()
+    const rtIdOverride = (formData.get('rt_id_override') as string) || undefined
+    const { supabase, profile } = await getAuthenticatedRTProfile(rtIdOverride)
 
     const raw = {
       warga_id: formData.get('warga_id') as string,
@@ -278,7 +296,8 @@ export async function createLaporanMeninggal(formData: FormData) {
 
 export async function createLaporanPindahan(formData: FormData) {
   try {
-    const { supabase, profile } = await getAuthenticatedRTProfile()
+    const rtIdOverride = (formData.get('rt_id_override') as string) || undefined
+    const { supabase, profile } = await getAuthenticatedRTProfile(rtIdOverride)
 
     const raw = {
       warga_id: formData.get('warga_id') as string,
@@ -321,7 +340,8 @@ export async function createLaporanPindahan(formData: FormData) {
 
 export async function createLaporanPerubahanData(formData: FormData) {
   try {
-    const { supabase, profile } = await getAuthenticatedRTProfile()
+    const rtIdOverride = (formData.get('rt_id_override') as string) || undefined
+    const { supabase, profile } = await getAuthenticatedRTProfile(rtIdOverride)
 
     const raw = {
       warga_id: formData.get('warga_id') as string,
@@ -439,3 +459,4 @@ export async function tolakLaporan(laporanId: string, alasan: string) {
     return { error: (err as Error).message }
   }
 }
+

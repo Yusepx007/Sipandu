@@ -53,9 +53,10 @@ function getNavItems(role: string) {
       ]
     case 'ketua_rw':
       return [
-        { href: '/rw',             label: 'Dashboard',     icon: <LayoutDashboard className="w-4 h-4" /> },
-        { href: '/rw/verifikasi',  label: 'Verifikasi',    icon: <ClipboardCheck className="w-4 h-4" /> },
-        { href: '/laporan/masuk',  label: 'Laporan',       icon: <FileText className="w-4 h-4" /> },
+        { href: '/rw',            label: 'Dashboard',     icon: <LayoutDashboard className="w-4 h-4" /> },
+        { href: '/rw/verifikasi', label: 'Verifikasi',    icon: <ClipboardCheck className="w-4 h-4" /> },
+        { href: '/rw/input',      label: 'Input Laporan', icon: <PlusCircle className="w-4 h-4" /> },
+        { href: '/laporan/masuk', label: 'Laporan',       icon: <FileText className="w-4 h-4" /> },
       ]
     case 'ketua_rt':
       return [
