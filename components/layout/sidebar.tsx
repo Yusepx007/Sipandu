@@ -45,23 +45,23 @@ function getNavItems(role: string) {
   switch (role) {
     case 'admin_kelurahan':
       return [
-        { href: '/admin',                 label: 'Dashboard',      icon: <LayoutDashboard className="w-4 h-4" />, sub: null },
-        { href: '/laporan',               label: 'Laporan',        icon: <FileText className="w-4 h-4" />,        sub: LAPORAN_ITEMS },
-        { href: '/admin/wilayah',         label: 'Master Wilayah', icon: <MapPin className="w-4 h-4" />,          sub: null },
-        { href: '/admin/pengguna',        label: 'Pengguna',       icon: <Users className="w-4 h-4" />,           sub: null },
-        { href: '/admin/laporan-kinerja', label: 'Lap. Kinerja',   icon: <BarChart3 className="w-4 h-4" />,       sub: null },
+        { href: '/admin',                 label: 'Dashboard',      icon: <LayoutDashboard className="w-4 h-4" /> },
+        { href: '/laporan/masuk',         label: 'Laporan',        icon: <FileText className="w-4 h-4" /> },
+        { href: '/admin/wilayah',         label: 'Master Wilayah', icon: <MapPin className="w-4 h-4" /> },
+        { href: '/admin/pengguna',        label: 'Pengguna',       icon: <Users className="w-4 h-4" /> },
+        { href: '/admin/laporan-kinerja', label: 'Lap. Kinerja',   icon: <BarChart3 className="w-4 h-4" /> },
       ]
     case 'ketua_rw':
       return [
-        { href: '/rw',              label: 'Dashboard',        icon: <LayoutDashboard className="w-4 h-4" />, sub: null },
-        { href: '/rw/verifikasi',   label: 'Verifikasi',       icon: <ClipboardCheck className="w-4 h-4" />, sub: null },
-        { href: '/laporan',         label: 'Semua Laporan',    icon: <FileText className="w-4 h-4" />,        sub: LAPORAN_ITEMS },
+        { href: '/rw',             label: 'Dashboard',     icon: <LayoutDashboard className="w-4 h-4" /> },
+        { href: '/rw/verifikasi',  label: 'Verifikasi',    icon: <ClipboardCheck className="w-4 h-4" /> },
+        { href: '/laporan/masuk',  label: 'Laporan',       icon: <FileText className="w-4 h-4" /> },
       ]
     case 'ketua_rt':
       return [
-        { href: '/rt',         label: 'Dashboard',       icon: <LayoutDashboard className="w-4 h-4" />, sub: null },
-        { href: '/rt/input',   label: 'Input Laporan',   icon: <PlusCircle className="w-4 h-4" />,      sub: null },
-        { href: '/laporan',    label: 'Riwayat Laporan', icon: <FileText className="w-4 h-4" />,        sub: LAPORAN_ITEMS },
+        { href: '/rt',        label: 'Dashboard',       icon: <LayoutDashboard className="w-4 h-4" /> },
+        { href: '/rt/input',  label: 'Input Laporan',   icon: <PlusCircle className="w-4 h-4" /> },
+        { href: '/laporan/masuk', label: 'Riwayat Laporan', icon: <FileText className="w-4 h-4" /> },
       ]
     default:
       return []
@@ -134,61 +134,16 @@ export function Sidebar({ profile }: SidebarProps) {
       {/* Navigation */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         {navItems.map((item) => {
-          const isLaporan = item.href === '/laporan'
-          const isActive = !isLaporan && (
+          const isActive =
             pathname === item.href ||
             (item.href !== '/admin' && item.href !== '/rw' && item.href !== '/rt' && pathname.startsWith(item.href))
-          )
-
-          if (isLaporan && item.sub) {
-            return (
-              <div key={item.href}>
-                <button
-                  type="button"
-                  onClick={() => setLaporanOpen(!laporanOpen)}
-                  className={cn(
-                    'sidebar-item w-full',
-                    isOnLaporan && 'text-foreground bg-accent'
-                  )}
-                >
-                  {item.icon}
-                  <span className="flex-1 text-left">{item.label}</span>
-                  {laporanOpen
-                    ? <ChevronDown className="w-3.5 h-3.5 opacity-50" />
-                    : <ChevronRight className="w-3.5 h-3.5 opacity-50" />}
-                </button>
-
-                {/* Submenu */}
-                {laporanOpen && (
-                  <div className="ml-3 mt-0.5 space-y-0.5 pl-4 border-l-2 border-border">
-                    {item.sub.map((sub) => {
-                      const subActive = pathname.startsWith(sub.href)
-                      return (
-                        <Link key={sub.href} href={sub.href}
-                          className={cn(
-                            'flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-all',
-                            subActive
-                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                              : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                          )}>
-                          {sub.icon}
-                          {sub.label}
-                          {subActive && <ChevronRight className="w-3 h-3 ml-auto opacity-50" />}
-                        </Link>
-                      )
-                    })}
-                  </div>
-                )}
-              </div>
-            )
-          }
 
           return (
             <Link key={item.href} href={item.href}
               className={cn('sidebar-item', isActive && 'active')}>
               {item.icon}
               <span className="flex-1">{item.label}</span>
-              {isActive && <ChevronRight className="w-3 h-3 opacity-50" />}
+              {isActive && <ChevronRight className="w-3 h-3 opacity-40" />}
             </Link>
           )
         })}
