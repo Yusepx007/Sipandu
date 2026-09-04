@@ -76,8 +76,12 @@ export default async function LaporanListPage({
       <div className="flex gap-2 overflow-x-auto pb-2">
         {allJenis.map((j) => (
           <Link key={j} href={`/laporan/${j}`}
-            className={cn('flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
-              j === jenis ? `jenis-${j}` : 'text-muted-foreground border-border hover:border-muted-foreground/50')}>
+            className={cn(
+              'flex-shrink-0 px-4 py-2 rounded-xl text-sm font-medium border transition-all',
+              j === jenis
+                ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                : 'text-gray-600 border-gray-200 hover:border-blue-300 hover:text-blue-600 bg-white'
+            )}>
             {JENIS_LAPORAN_LABEL[j]}
           </Link>
         ))}
@@ -88,13 +92,15 @@ export default async function LaporanListPage({
         <Filter className="w-4 h-4 text-muted-foreground" />
         <Link href={`/laporan/${jenis}`}
           className={cn('px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
-            !sp.status ? 'bg-blue-500/15 border-blue-500/30 text-blue-400' : 'text-muted-foreground border-border hover:border-muted-foreground/50')}>
+            !sp.status
+              ? 'bg-blue-50 border-blue-200 text-blue-700 font-semibold'
+              : 'text-gray-500 border-gray-200 hover:border-gray-400 bg-white')}>
           Semua
         </Link>
         {statusOptions.map((s) => (
           <Link key={s} href={`/laporan/${jenis}?status=${s}`}
             className={cn('px-3 py-1.5 rounded-lg text-xs font-medium border transition-all',
-              sp.status === s ? `badge-${s}` : 'text-muted-foreground border-border hover:border-muted-foreground/50')}>
+              sp.status === s ? `badge-${s}` : 'text-gray-500 border-gray-200 hover:border-gray-400 bg-white')}>
             {STATUS_LAPORAN_LABEL[s as keyof typeof STATUS_LAPORAN_LABEL]}
           </Link>
         ))}
@@ -147,7 +153,7 @@ export default async function LaporanListPage({
                         </span>
                       </td>
                       <td className="px-4 py-3">
-                        <Link href={`/laporan/${l.jenis}/${l.id}`} className="text-xs text-blue-400 hover:text-blue-300 transition-colors">Detail →</Link>
+                        <Link href={`/laporan/${l.jenis}/${l.id}`} className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">Detail →</Link>
                       </td>
                     </tr>
                   )
