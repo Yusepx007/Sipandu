@@ -33,40 +33,40 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[hsl(222,50%,5%)] via-[hsl(222,47%,8%)] to-[hsl(240,40%,10%)]" />
+      {/* Background gradient — light theme */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-indigo-50" />
       
       {/* Decorative orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-200/40 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-200/40 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative w-full max-w-md animate-fade-in">
         {/* Logo & Branding */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-500/15 border border-blue-500/30 mb-4">
-            <Building2 className="w-8 h-8 text-blue-400" />
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-100 border border-blue-200 mb-4 shadow-sm">
+            <Building2 className="w-8 h-8 text-blue-600" />
           </div>
           <h1 className="text-3xl font-bold gradient-text mb-2">Sipandu</h1>
-          <p className="text-muted-foreground text-sm">
+          <p className="text-gray-500 text-sm">
             Sistem Pendataan dan Pelaporan Kependudukan
           </p>
-          <p className="text-muted-foreground/70 text-xs mt-1">
+          <p className="text-gray-400 text-xs mt-1">
             Kelurahan Setiamulya
           </p>
         </div>
 
         {/* Login Card */}
-        <div className="glass-card rounded-2xl p-8 shadow-2xl">
-          <h2 className="text-xl font-semibold text-foreground mb-6">Masuk ke Akun</h2>
+        <div className="bg-white rounded-2xl p-8 shadow-xl border border-gray-100">
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Masuk ke Akun</h2>
 
           <form onSubmit={handleLogin} className="space-y-5" id="login-form">
             {/* Email */}
             <div className="space-y-2">
-              <label htmlFor="email" className="text-sm font-medium text-foreground">
+              <label htmlFor="email" className="text-sm font-medium text-gray-700">
                 Alamat Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   id="email"
                   type="email"
@@ -74,18 +74,18 @@ export default function LoginPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nama@kelurahan.id"
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all text-sm bg-white"
                 />
               </div>
             </div>
 
             {/* Password */}
             <div className="space-y-2">
-              <label htmlFor="password" className="text-sm font-medium text-foreground">
+              <label htmlFor="password" className="text-sm font-medium text-gray-700">
                 Kata Sandi
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   id="password"
                   type={showPassword ? 'text' : 'password'}
@@ -93,12 +93,12 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
-                  className="w-full pl-10 pr-12 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all text-sm"
+                  className="w-full pl-10 pr-12 py-3 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-400 transition-all text-sm bg-white"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
@@ -107,7 +107,7 @@ export default function LoginPage() {
 
             {/* Error */}
             {error && (
-              <div className="px-4 py-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-sm">
+              <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">
                 {error}
               </div>
             )}
@@ -117,7 +117,7 @@ export default function LoginPage() {
               id="btn-login"
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:bg-blue-500/50 text-white font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+              className="w-full py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-blue-200"
             >
               {loading ? (
                 <>
@@ -130,18 +130,16 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-border">
-            <p className="text-xs text-muted-foreground text-center">
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <p className="text-xs text-gray-400 text-center">
               Akun dibuat oleh Admin Kelurahan.{' '}
-              <span className="text-muted-foreground/70">
-                Hubungi admin jika bermasalah dengan akses.
-              </span>
+              Hubungi admin jika bermasalah dengan akses.
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <p className="text-center text-xs text-muted-foreground/50 mt-6">
+        <p className="text-center text-xs text-gray-400 mt-6">
           Sipandu v1.0 — © 2024 Kelurahan Setiamulya
         </p>
       </div>

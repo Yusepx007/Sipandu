@@ -27,8 +27,11 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar profile={profile} />
+    <div className="flex min-h-screen bg-[hsl(210,20%,98%)]">
+      {/* Sidebar dengan shadow tipis */}
+      <div className="shadow-[1px_0_0_0_hsl(214,32%,88%)]">
+        <Sidebar profile={profile} />
+      </div>
       
       {/* Main content */}
       <div className="flex-1 flex flex-col min-w-0">

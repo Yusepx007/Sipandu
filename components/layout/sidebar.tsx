@@ -61,13 +61,13 @@ function getNavItems(role: string): NavItem[] {
 function getRoleBadge(role: string): { label: string; color: string } {
   switch (role) {
     case 'admin_kelurahan':
-      return { label: 'Admin Kelurahan', color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' }
+      return { label: 'Admin Kelurahan', color: 'text-blue-700 bg-blue-50 border-blue-200' }
     case 'ketua_rw':
-      return { label: 'Ketua RW', color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' }
+      return { label: 'Ketua RW', color: 'text-purple-700 bg-purple-50 border-purple-200' }
     case 'ketua_rt':
-      return { label: 'Ketua RT', color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' }
+      return { label: 'Ketua RT', color: 'text-emerald-700 bg-emerald-50 border-emerald-200' }
     default:
-      return { label: 'Pengguna', color: 'text-gray-400 bg-gray-500/10 border-gray-500/20' }
+      return { label: 'Pengguna', color: 'text-gray-600 bg-gray-50 border-gray-200' }
   }
 }
 
@@ -105,8 +105,8 @@ export function Sidebar({ profile }: SidebarProps) {
       {/* Logo */}
       <div className="p-5 border-b" style={{ borderColor: 'hsl(var(--sidebar-border))' }}>
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
-            <Building2 className="w-5 h-5 text-blue-400" />
+          <div className="w-9 h-9 rounded-xl bg-blue-100 border border-blue-200 flex items-center justify-center flex-shrink-0">
+            <Building2 className="w-5 h-5 text-blue-600" />
           </div>
           <div>
             <p className="font-bold text-sm text-foreground">Sipandu</p>
@@ -152,7 +152,7 @@ export function Sidebar({ profile }: SidebarProps) {
         <button
           id="btn-logout"
           onClick={handleLogout}
-          className="sidebar-item w-full text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+          className="sidebar-item w-full text-rose-600 hover:text-rose-700 hover:bg-rose-50"
         >
           <LogOut className="w-4 h-4" />
           <span>Keluar</span>
