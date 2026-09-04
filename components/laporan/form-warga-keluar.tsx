@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createLaporanKeluar } from '@/lib/actions/laporan.actions'
-import { Loader2, CheckCircle2, Search } from 'lucide-react'
+import { Loader2, CheckCircle2, ChevronDown } from 'lucide-react'
 import type { Warga } from '@/lib/types'
 
 interface FormWargaKeluarProps {
@@ -12,85 +12,149 @@ interface FormWargaKeluarProps {
   rtId: string
 }
 
+// ── Shared Styles ──────────────────────────────────────────
+const inputClass = 'w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm'
+const labelClass = 'block text-sm font-medium text-gray-700 mb-1.5'
+
+function Field({ label, name, type = 'text', placeholder, required, maxLength, pattern, readOnly, value }: {
+  label: string; name: string; type?: string; placeholder?: string;
+  required?: boolean; maxLength?: number; pattern?: string; readOnly?: boolean; value?: string
+}) {
+  if (type === 'textarea') return (
+    <div>
+      <label htmlFor={name} className={labelClass}>{label}</label>
+      <textarea id={name} name={name} placeholder={placeholder} rows={3}
+        className="w-full px-4 py-3 rounded-xl bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm resize-none" />
+    </div>
+  )
+  return (
+    <div>
+      <label htmlFor={name} className={labelClass}>
+        {label}{required && <span className="text-rose-500 ml-1">*</span>}
+      </label>
+      <input id={name} name={name} type={type} placeholder={placeholder} required={required}
+        maxLength={maxLength} pattern={pattern} readOnly={readOnly} defaultValue={value}
+        className={readOnly
+          ? 'w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed'
+          : inputClass} />
+    </div>
+  )
+}
+
+function SelectField({ label, name, required, options, value, onChange }: {
+  label: string; name: string; required?: boolean
+  options: { value: string; label: string }[]
+  value?: string; onChange?: (v: string) => void
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className={labelClass}>
+        {label}{required && <span className="text-rose-500 ml-1">*</span>}
+      </label>
+      <div className="relative">
+        <select id={name} name={name} required={required}
+          value={value} onChange={e => onChange?.(e.target.value)}
+          className="w-full px-4 py-3 pr-10 rounded-xl bg-white border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm appearance-none cursor-pointer">
+          <option value="">-- Pilih --</option>
+          {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+      </div>
+    </div>
+  )
+}
+
+function WargaSelect({ label, name, required, wargaList, value, onChange }: {
+  label: string; name: string; required?: boolean
+  wargaList: Partial<Warga>[]
+  value?: string; onChange?: (v: string) => void
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className={labelClass}>
+        {label}{required && <span className="text-rose-500 ml-1">*</span>}
+      </label>
+      <div className="relative">
+        <select id={name} name={name} required={required}
+          value={value} onChange={e => onChange?.(e.target.value)}
+          className="w-full px-4 py-3 pr-10 rounded-xl bg-white border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm appearance-none cursor-pointer">
+          <option value="">-- Pilih Warga --</option>
+          {wargaList.map(w => (
+            <option key={w.id} value={w.id}>{w.nama} — NIK: {w.nik}</option>
+          ))}
+        </select>
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+      </div>
+    </div>
+  )
+}
+
+function ErrorBox({ msg }: { msg: string }) {
+  return <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{msg}</div>
+}
+
+function FormActions({ pending, onBack, submitLabel, submitId }: {
+  pending: boolean; onBack: () => void; submitLabel: string; submitId: string
+}) {
+  return (
+    <div className="flex gap-3 pt-4 border-t border-gray-100">
+      <button type="button" onClick={onBack}
+        className="flex-1 py-3 rounded-xl border border-gray-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50 transition-all text-sm font-medium">
+        Batal
+      </button>
+      <button id={submitId} type="submit" disabled={pending}
+        className="flex-1 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2 shadow-sm">
+        {pending ? <><Loader2 className="w-4 h-4 animate-spin" />Menyimpan...</> : submitLabel}
+      </button>
+    </div>
+  )
+}
+
+function SuccessState() {
+  return (
+    <div className="flex flex-col items-center justify-center py-20 text-center gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm">
+      <div className="w-20 h-20 rounded-full bg-emerald-100 flex items-center justify-center">
+        <CheckCircle2 className="w-10 h-10 text-emerald-600" />
+      </div>
+      <h2 className="text-2xl font-bold text-gray-900">Laporan Berhasil Diajukan!</h2>
+      <p className="text-gray-500">Menunggu verifikasi Ketua RW</p>
+      <p className="text-xs text-gray-400">Mengalihkan ke dashboard...</p>
+    </div>
+  )
+}
+
+// ── FORM: WARGA KELUAR ──────────────────────────────────────
 export function FormWargaKeluar({ wargaList }: FormWargaKeluarProps) {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
-  const [selected, setSelected] = useState<Partial<Warga> | null>(null)
   const router = useRouter()
-
-  const filtered = wargaList.filter(
-    (w) =>
-      w.nama?.toLowerCase().includes(search.toLowerCase()) ||
-      w.nik?.includes(search)
-  )
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    if (!selected) { setError('Pilih warga terlebih dahulu'); return }
-    setPending(true)
-    setError('')
-    const formData = new FormData(e.currentTarget)
-    formData.set('warga_id', selected.id!)
-    const result = await createLaporanKeluar(formData)
+    setPending(true); setError('')
+    const result = await createLaporanKeluar(new FormData(e.currentTarget))
     setPending(false)
-    if (result?.error) { setError(result.error) } 
+    if (result?.error) setError(result.error)
     else { setSuccess(true); setTimeout(() => router.push('/rt'), 2000) }
   }
 
   if (success) return <SuccessState />
-
   return (
-    <form onSubmit={handleSubmit} id="form-warga-keluar" className="space-y-5 bg-card rounded-2xl border border-border p-6">
-      {/* Cari warga */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">Pilih Warga <span className="text-rose-600">*</span></label>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text" value={search} onChange={(e) => setSearch(e.target.value)}
-            placeholder="Cari nama atau NIK..."
-            className="w-full pl-10 pr-4 py-3 rounded-xl input-style"
-          />
-        </div>
-        {search && (
-          <div className="max-h-48 overflow-y-auto rounded-xl border border-border bg-[hsl(222,45%,10%)] divide-y divide-border">
-            {filtered.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-muted-foreground">Tidak ditemukan</p>
-            ) : filtered.map((w) => (
-              <button key={w.id} type="button"
-                onClick={() => { setSelected(w); setSearch('') }}
-                className="w-full text-left px-4 py-3 hover:bg-accent transition-colors">
-                <p className="text-sm font-medium text-foreground">{w.nama}</p>
-                <p className="text-xs text-muted-foreground">{w.nik}</p>
-              </button>
-            ))}
-          </div>
-        )}
-        {selected && (
-          <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-50 border border-blue-200">
-            <div>
-              <p className="text-sm font-medium text-blue-300">{selected.nama}</p>
-              <p className="text-xs text-blue-600/70">{selected.nik}</p>
-            </div>
-            <button type="button" onClick={() => setSelected(null)} className="text-xs text-muted-foreground hover:text-rose-600">Ganti</button>
-          </div>
-        )}
-      </div>
-
+    <form onSubmit={handleSubmit} id="form-warga-keluar" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+      <WargaSelect label="Pilih Warga" name="warga_id" required wargaList={wargaList} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Alamat Tujuan" name="alamat_tujuan" placeholder="Alamat lengkap tujuan" required />
         <Field label="Kota/Kabupaten Tujuan" name="kota_tujuan" placeholder="Contoh: Kota Bandung" required />
       </div>
       <Field label="Keterangan" name="keterangan" type="textarea" placeholder="Catatan tambahan (opsional)" />
-
       {error && <ErrorBox msg={error} />}
       <FormActions pending={pending} onBack={() => router.back()} submitLabel="Ajukan Laporan" submitId="btn-submit-keluar" />
     </form>
   )
 }
 
+// ── FORM: KELAHIRAN ─────────────────────────────────────────
 export function FormLahir() {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -99,18 +163,16 @@ export function FormLahir() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); setPending(true); setError('')
-    const formData = new FormData(e.currentTarget)
     const { createLaporanLahir } = await import('@/lib/actions/laporan.actions')
-    const result = await createLaporanLahir(formData)
+    const result = await createLaporanLahir(new FormData(e.currentTarget))
     setPending(false)
     if (result?.error) setError(result.error)
     else { setSuccess(true); setTimeout(() => router.push('/rt'), 2000) }
   }
 
   if (success) return <SuccessState />
-
   return (
-    <form onSubmit={handleSubmit} id="form-lahir" className="space-y-5 bg-card rounded-2xl border border-border p-6">
+    <form onSubmit={handleSubmit} id="form-lahir" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Nama Bayi" name="nama" placeholder="Nama lengkap bayi" required />
         <Field label="Tanggal Lahir" name="tanggal_lahir" type="date" required />
@@ -130,36 +192,29 @@ export function FormLahir() {
   )
 }
 
+// ── FORM: KEMATIAN ──────────────────────────────────────────
 export function FormMeninggal({ wargaList }: FormWargaKeluarProps) {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
-  const [selected, setSelected] = useState<Partial<Warga> | null>(null)
   const router = useRouter()
-  const filtered = wargaList.filter(w => w.nama?.toLowerCase().includes(search.toLowerCase()) || w.nik?.includes(search))
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (!selected) { setError('Pilih warga terlebih dahulu'); return }
-    setPending(true); setError('')
-    const formData = new FormData(e.currentTarget)
-    formData.set('warga_id', selected.id!)
+    e.preventDefault(); setPending(true); setError('')
     const { createLaporanMeninggal } = await import('@/lib/actions/laporan.actions')
-    const result = await createLaporanMeninggal(formData)
+    const result = await createLaporanMeninggal(new FormData(e.currentTarget))
     setPending(false)
     if (result?.error) setError(result.error)
     else { setSuccess(true); setTimeout(() => router.push('/rt'), 2000) }
   }
 
   if (success) return <SuccessState />
-
   return (
-    <form onSubmit={handleSubmit} id="form-meninggal" className="space-y-5 bg-card rounded-2xl border border-border p-6">
-      <WargaSelector wargaList={wargaList} search={search} setSearch={setSearch} selected={selected} setSelected={setSelected} filtered={filtered} />
+    <form onSubmit={handleSubmit} id="form-meninggal" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+      <WargaSelect label="Pilih Warga" name="warga_id" required wargaList={wargaList} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Tanggal Meninggal" name="tanggal_meninggal" type="date" required />
-        <Field label="Penyebab (opsional)" name="penyebab" placeholder="Contoh: Sakit" />
+        <Field label="Penyebab (opsional)" name="penyebab" placeholder="Contoh: Sakit keras" />
       </div>
       <Field label="Keterangan" name="keterangan" type="textarea" placeholder="Catatan tambahan (opsional)" />
       {error && <ErrorBox msg={error} />}
@@ -168,43 +223,40 @@ export function FormMeninggal({ wargaList }: FormWargaKeluarProps) {
   )
 }
 
+// ── FORM: PINDAHAN ──────────────────────────────────────────
 export function FormPindahan({ wargaList, rtList }: FormWargaKeluarProps & { rtList: Array<{ id: string; nomor: string; rw?: { nomor?: string } | unknown }> }) {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
-  const [selected, setSelected] = useState<Partial<Warga> | null>(null)
   const router = useRouter()
-  const filtered = wargaList.filter(w => w.nama?.toLowerCase().includes(search.toLowerCase()) || w.nik?.includes(search))
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (!selected) { setError('Pilih warga terlebih dahulu'); return }
-    setPending(true); setError('')
-    const formData = new FormData(e.currentTarget)
-    formData.set('warga_id', selected.id!)
+    e.preventDefault(); setPending(true); setError('')
     const { createLaporanPindahan } = await import('@/lib/actions/laporan.actions')
-    const result = await createLaporanPindahan(formData)
+    const result = await createLaporanPindahan(new FormData(e.currentTarget))
     setPending(false)
     if (result?.error) setError(result.error)
     else { setSuccess(true); setTimeout(() => router.push('/rt'), 2000) }
   }
 
   if (success) return <SuccessState />
-
   return (
-    <form onSubmit={handleSubmit} id="form-pindahan" className="space-y-5 bg-card rounded-2xl border border-border p-6">
-      <WargaSelector wargaList={wargaList} search={search} setSearch={setSearch} selected={selected} setSelected={setSelected} filtered={filtered} />
-      <div className="space-y-1.5">
-        <label htmlFor="rt_tujuan_id" className="text-sm font-medium text-foreground">RT Tujuan <span className="text-rose-600">*</span></label>
-        <select id="rt_tujuan_id" name="rt_tujuan_id" required className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
-          <option value="">-- Pilih RT Tujuan --</option>
-          {(rtList as Array<{ id: string; nomor: string; rw?: { nomor?: string } | unknown }>).map((rt) => (
-            <option key={rt.id} value={rt.id}>
-              RT {rt.nomor} {rt.rw && typeof rt.rw === 'object' && 'nomor' in rt.rw ? `/ RW ${(rt.rw as {nomor?: string}).nomor}` : ''}
-            </option>
-          ))}
-        </select>
+    <form onSubmit={handleSubmit} id="form-pindahan" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+      <WargaSelect label="Pilih Warga" name="warga_id" required wargaList={wargaList} />
+      <div className="relative">
+        <label htmlFor="rt_tujuan_id" className={labelClass}>RT Tujuan <span className="text-rose-500">*</span></label>
+        <div className="relative">
+          <select id="rt_tujuan_id" name="rt_tujuan_id" required
+            className="w-full px-4 py-3 pr-10 rounded-xl bg-white border border-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all text-sm appearance-none cursor-pointer">
+            <option value="">-- Pilih RT Tujuan --</option>
+            {(rtList as Array<{ id: string; nomor: string; rw?: { nomor?: string } | unknown }>).map(rt => (
+              <option key={rt.id} value={rt.id}>
+                RT {rt.nomor}{rt.rw && typeof rt.rw === 'object' && 'nomor' in rt.rw ? ` / RW ${(rt.rw as {nomor?: string}).nomor}` : ''}
+              </option>
+            ))}
+          </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+        </div>
       </div>
       <Field label="Alasan Pindah (opsional)" name="alasan" placeholder="Contoh: Pindah karena menikah" />
       <Field label="Keterangan" name="keterangan" type="textarea" placeholder="Catatan tambahan (opsional)" />
@@ -214,16 +266,16 @@ export function FormPindahan({ wargaList, rtList }: FormWargaKeluarProps & { rtL
   )
 }
 
+// ── FORM: PERUBAHAN DATA ────────────────────────────────────
 export function FormPerubahanData({ wargaList }: FormWargaKeluarProps) {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
-  const [search, setSearch] = useState('')
-  const [selected, setSelected] = useState<Partial<Warga> | null>(null)
+  const [wargaId, setWargaId] = useState('')
   const [fieldDiubah, setFieldDiubah] = useState('')
   const router = useRouter()
-  const filtered = wargaList.filter(w => w.nama?.toLowerCase().includes(search.toLowerCase()) || w.nik?.includes(search))
 
+  const selectedWarga = wargaList.find(w => w.id === wargaId)
   const fieldOptions = [
     { value: 'nama', label: 'Nama Lengkap' },
     { value: 'alamat', label: 'Alamat' },
@@ -232,44 +284,32 @@ export function FormPerubahanData({ wargaList }: FormWargaKeluarProps) {
     { value: 'pendidikan', label: 'Pendidikan Terakhir' },
     { value: 'nomor_hp', label: 'Nomor HP' },
   ]
-
-  const nilaiLama = selected && fieldDiubah
-    ? String(selected[fieldDiubah as keyof Warga] ?? '')
+  const nilaiLama = selectedWarga && fieldDiubah
+    ? String(selectedWarga[fieldDiubah as keyof Warga] ?? '')
     : ''
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (!selected) { setError('Pilih warga terlebih dahulu'); return }
-    setPending(true); setError('')
-    const formData = new FormData(e.currentTarget)
-    formData.set('warga_id', selected.id!)
+    e.preventDefault(); setPending(true); setError('')
     const { createLaporanPerubahanData } = await import('@/lib/actions/laporan.actions')
-    const result = await createLaporanPerubahanData(formData)
+    const result = await createLaporanPerubahanData(new FormData(e.currentTarget))
     setPending(false)
     if (result?.error) setError(result.error)
     else { setSuccess(true); setTimeout(() => router.push('/rt'), 2000) }
   }
 
   if (success) return <SuccessState />
-
   return (
-    <form onSubmit={handleSubmit} id="form-perubahan-data" className="space-y-5 bg-card rounded-2xl border border-border p-6">
-      <WargaSelector wargaList={wargaList} search={search} setSearch={setSearch} selected={selected} setSelected={setSelected} filtered={filtered} />
-      <div className="space-y-1.5">
-        <label htmlFor="field_diubah" className="text-sm font-medium text-foreground">Field yang Diubah <span className="text-rose-600">*</span></label>
-        <select id="field_diubah" name="field_diubah" required value={fieldDiubah} onChange={e => setFieldDiubah(e.target.value)}
-          className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
-          <option value="">-- Pilih field --</option>
-          {fieldOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
-      </div>
+    <form onSubmit={handleSubmit} id="form-perubahan-data" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+      <WargaSelect label="Pilih Warga" name="warga_id" required wargaList={wargaList} value={wargaId} onChange={setWargaId} />
+      <SelectField label="Data yang Diubah" name="field_diubah" required
+        options={fieldOptions} value={fieldDiubah} onChange={setFieldDiubah} />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <label htmlFor="nilai_lama" className="text-sm font-medium text-foreground">Nilai Lama</label>
-          <input id="nilai_lama" name="nilai_lama" type="text" value={nilaiLama} readOnly
-            className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,8%)] border border-[hsl(222,40%,15%)] text-muted-foreground text-sm cursor-not-allowed" />
+        <div>
+          <label className={labelClass}>Nilai Lama</label>
+          <input name="nilai_lama" type="text" value={nilaiLama} readOnly
+            className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-500 text-sm cursor-not-allowed" />
         </div>
-        <Field label="Nilai Baru" name="nilai_baru" placeholder="Nilai yang diperbarui" required />
+        <Field label="Nilai Baru" name="nilai_baru" placeholder="Masukkan nilai baru" required />
       </div>
       <Field label="Keterangan" name="keterangan" type="textarea" placeholder="Alasan perubahan data" />
       {error && <ErrorBox msg={error} />}
@@ -277,120 +317,3 @@ export function FormPerubahanData({ wargaList }: FormWargaKeluarProps) {
     </form>
   )
 }
-
-// ============================================================
-// SHARED COMPONENTS
-// ============================================================
-
-function WargaSelector({ wargaList, search, setSearch, selected, setSelected, filtered }: {
-  wargaList: Partial<Warga>[]; search: string; setSearch: (v: string) => void
-  selected: Partial<Warga> | null; setSelected: (w: Partial<Warga> | null) => void
-  filtered: Partial<Warga>[]
-}) {
-  return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium text-foreground">Pilih Warga <span className="text-rose-600">*</span></label>
-      {!selected ? (
-        <>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <input type="text" value={search} onChange={e => setSearch(e.target.value)}
-              placeholder="Cari nama atau NIK..." className="w-full pl-10 pr-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm" />
-          </div>
-          {search && (
-            <div className="max-h-48 overflow-y-auto rounded-xl border border-border bg-[hsl(222,45%,10%)] divide-y divide-border">
-              {filtered.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-muted-foreground">Tidak ditemukan</p>
-              ) : filtered.map(w => (
-                <button key={w.id} type="button" onClick={() => { setSelected(w); setSearch('') }}
-                  className="w-full text-left px-4 py-3 hover:bg-accent transition-colors">
-                  <p className="text-sm font-medium text-foreground">{w.nama}</p>
-                  <p className="text-xs text-muted-foreground">{w.nik}</p>
-                </button>
-              ))}
-            </div>
-          )}
-        </>
-      ) : (
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-50 border border-blue-200">
-          <div>
-            <p className="text-sm font-medium text-blue-300">{selected.nama}</p>
-            <p className="text-xs text-blue-600/70">{selected.nik}</p>
-          </div>
-          <button type="button" onClick={() => setSelected(null)} className="text-xs text-muted-foreground hover:text-rose-600 transition-colors">Ganti</button>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function Field({ label, name, type = 'text', placeholder, required, maxLength }: {
-  label: string; name: string; type?: string; placeholder?: string; required?: boolean; maxLength?: number
-}) {
-  if (type === 'textarea') return (
-    <div className="space-y-1.5">
-      <label htmlFor={name} className="text-sm font-medium text-foreground">{label}</label>
-      <textarea id={name} name={name} placeholder={placeholder} rows={3}
-        className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm resize-none" />
-    </div>
-  )
-  return (
-    <div className="space-y-1.5">
-      <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-600 ml-1">*</span>}
-      </label>
-      <input id={name} name={name} type={type} placeholder={placeholder} required={required} maxLength={maxLength}
-        className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm" />
-    </div>
-  )
-}
-
-function SelectField({ label, name, required, options }: {
-  label: string; name: string; required?: boolean; options: { value: string; label: string }[]
-}) {
-  return (
-    <div className="space-y-1.5">
-      <label htmlFor={name} className="text-sm font-medium text-foreground">
-        {label}{required && <span className="text-rose-600 ml-1">*</span>}
-      </label>
-      <select id={name} name={name} required={required}
-        className="w-full px-4 py-3 rounded-xl bg-[hsl(222,40%,12%)] border border-[hsl(222,40%,20%)] text-foreground focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-sm">
-        <option value="">-- Pilih --</option>
-        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
-      </select>
-    </div>
-  )
-}
-
-function ErrorBox({ msg }: { msg: string }) {
-  return <div className="px-4 py-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm">{msg}</div>
-}
-
-function FormActions({ pending, onBack, submitLabel, submitId }: {
-  pending: boolean; onBack: () => void; submitLabel: string; submitId: string
-}) {
-  return (
-    <div className="flex gap-3 pt-2">
-      <button type="button" onClick={onBack}
-        className="flex-1 py-3 rounded-xl border border-border text-muted-foreground hover:text-foreground transition-all text-sm font-medium">
-        Batal
-      </button>
-      <button id={submitId} type="submit" disabled={pending}
-        className="flex-1 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 disabled:opacity-50 text-white font-semibold text-sm transition-all flex items-center justify-center gap-2">
-        {pending ? <><Loader2 className="w-4 h-4 animate-spin" />Menyimpan...</> : submitLabel}
-      </button>
-    </div>
-  )
-}
-
-function SuccessState() {
-  return (
-    <div className="flex flex-col items-center justify-center py-16 text-center gap-4 bg-card rounded-2xl border border-border">
-      <CheckCircle2 className="w-16 h-16 text-emerald-600" />
-      <h2 className="text-xl font-bold text-foreground">Laporan Berhasil Diajukan!</h2>
-      <p className="text-muted-foreground text-sm">Status: Menunggu verifikasi Ketua RW</p>
-      <p className="text-xs text-muted-foreground">Mengalihkan ke dashboard...</p>
-    </div>
-  )
-}
-
